@@ -5,11 +5,11 @@ import lab3.repository.CourseRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Student extends Person{
+public class Student extends Person {
     private Long studentId;
     private int totalCredits;
 
-    public Student(Long studentId, int totalCredits, List<Course> enrolledCourses, String firstName, String lastName) {
+    public Student(Long studentId, int totalCredits, String firstName, String lastName) {
         super(firstName, lastName);
         this.studentId = studentId;
         this.totalCredits = totalCredits;
@@ -47,5 +47,39 @@ public class Student extends Person{
                 "studentId=" + studentId +
                 ", totalCredits=" + totalCredits +
                 '}';
+    }
+
+    /**
+     *
+     * @return String value of the student which is accepted in the text file format.
+     */
+    public String customToString() {
+        String splitter = ", ";
+        String listSplitter = ";";
+        StringBuilder student = new StringBuilder();
+
+        //name
+        student.append(this.getFirstName());
+        student.append(" ");
+        student.append(this.getLastName());
+        student.append(splitter);
+
+        //studentId
+        student.append(String.valueOf(this.studentId));
+        student.append(splitter);
+
+        //totalCredits
+        student.append(String.valueOf(this.totalCredits));
+        student.append(splitter);
+
+        //list of enrolledCourses
+        student.append("[");
+        for (Course course : getEnrolledCourses()) {
+            student.append(String.valueOf(course.getCourseId()));
+            student.append(listSplitter);
+        }
+        student.append("]");
+
+        return student.toString();
     }
 }

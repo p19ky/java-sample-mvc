@@ -2,8 +2,9 @@ package lab3.repository;
 
 import lab3.model.Course;
 import lab3.model.Student;
-import lab3.model.Teacher;
+import lab3.utilities.DeleteSpecificFileLines;
 import lab3.utilities.ModelReader;
+import lab3.utilities.ModelWriter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,8 @@ public class StudentRepository implements ICrudRepository<Student>{
 
     public StudentRepository(String fileName) {
         this.fileName = fileName;
+        students = new ArrayList<Student>();
+        this.fillStudentRepositoryWithStudentsFromFile();
     }
 
     private void fillStudentRepositoryWithStudentsFromFile() {
@@ -32,7 +35,18 @@ public class StudentRepository implements ICrudRepository<Student>{
             //totalCredits
             int totalCredits = Integer.parseInt(words[2]);
 
-            //TODO
+            Student stud = new Student(studentId, totalCredits, firstName, lastName);
+
+            boolean alreadyExists = false;
+
+            for (Student student : students)
+                if (student.getStudentId().equals(stud.getStudentId())) {
+                    alreadyExists = true;
+                    break;
+                }
+
+            if (!alreadyExists)
+                students.add(stud);
         }
     }
 
@@ -59,6 +73,10 @@ public class StudentRepository implements ICrudRepository<Student>{
      */
     @Override
     public Student findOne(Long id) {
+        for (Student student : students)
+            if (student.getStudentId().equals(id))
+                return student;
+
         return null;
     }
 
@@ -68,16 +86,25 @@ public class StudentRepository implements ICrudRepository<Student>{
      */
     @Override
     public List<Student> findAll() {
-        return null;
+        return students;
     }
 
     /**
      *
      * @param student which has to be saved
-     * @return  null- if the given student is saved otherwise returns the student (id already exists)
+     * @return null- if the given student is saved otherwise returns the student (id already exists)
      */
     @Override
     public Student save(Student student) {
+        for (Student stud : students)
+            if (stud.getStudentId().equals(student.getStudentId()))
+                return student;
+
+        String newLine = student.customToString();
+        ModelWriter mw = new ModelWriter();
+        mw.writeToFile(this.fileName, newLine);
+        students.add(student);
+
         return null;
     }
 
@@ -88,6 +115,28 @@ public class StudentRepository implements ICrudRepository<Student>{
      */
     @Override
     public Student delete(Long id) {
+        Student studentToReturn = null;
+        int index = -1;
+        for (int i = 0; i < students.size(); i++) {
+            if (students.get(i).getStudentId().equals(id)) {
+                studentToReturn = students.get(i);
+                index = i;
+            }
+        }
+
+        if (index != -1) {
+            students.remove(index);
+        }
+
+        //if student deleted
+        if (studentToReturn != null)
+        {
+            DeleteSpecificFileLines df = new DeleteSpecificFileLines();
+            df.deleteLines(this.fileName, String.valueOf(studentToReturn.getStudentId()));
+            return studentToReturn;
+        }
+
+        //student not found.
         return null;
     }
 
@@ -99,6 +148,33 @@ public class StudentRepository implements ICrudRepository<Student>{
      */
     @Override
     public Student update(Long id, Student student) {
-        return null;
+        for (Student stud : students)
+            if (stud.getStudentId().equals(id)) {
+                DeleteSpecificFileLines df = new DeleteSpecificFileLines();
+                df.deleteLines(this.fileName, String.valueOf(stud.getStudentId()));
+                stud.setFirstName(student.getFirstName());
+                stud.setLastName(student.getLastName());
+                stud.setTotalCredits(student.getTotalCredits());
+                String newLine = stud.customToString();
+                ModelWriter mw = new ModelWriter();
+                mw.writeToFile(this.fileName, newLine);
+                return null;
+            }
+
+        return student;
+    }
+
+    /**
+     * PRINT STUDENTS TO CONSOLE.
+     */
+    public void printStudents() {
+        for (Student student : students) {
+            StringBuilder str = new StringBuilder();
+            str.append(student.toString() + " enrolledCourses: [");
+            for (Course course : student.getEnrolledCourses())
+                str.append(course.getName() + ";");
+            str.append("]");
+            System.out.println(str.toString());
+        }
     }
 }

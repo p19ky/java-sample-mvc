@@ -32,6 +32,7 @@ public class CourseRepository implements ICrudRepository<Course> {
 
     public CourseRepository(String fileName) {
         this.fileName = fileName;
+        courses = new ArrayList<Course>();
         this.fillCourseRepositoryWithCoursesFromFile();
     }
 
@@ -40,44 +41,50 @@ public class CourseRepository implements ICrudRepository<Course> {
      */
     private void fillCourseRepositoryWithCoursesFromFile() {
         List<String> listOfLines = new ModelReader().getLinesFromFile(this.fileName);
-        for (String line : listOfLines) {
-            String[] words = line.split(", ");
+        if (StudentRepository.getStudents() != null && TeacherRepository.getTeachers() != null)
+            for (String line : listOfLines) {
+                String[] words = line.split(", ");
 
-            //name
-            String name = words[0];
+                //name
+                String name = words[0];
 
-            //courseId
-            Long courseId = Long.parseLong(words[1]);
+                //courseId
+                Long courseId = Long.parseLong(words[1]);
 
-            //teacher
-            Teacher teacher = null;
-            for (Teacher t : TeacherRepository.getTeachers())
-                if (t.getTeacherId() == Long.parseLong(words[2])) teacher = t;
+                //teacher
+                Teacher teacher = null;
+                for (Teacher t : TeacherRepository.getTeachers())
+                    if (t.getTeacherId() == Long.parseLong(words[2])) teacher = t;
 
-            //maxEnrollment
-            int maxEnrollment = Integer.parseInt(words[3]);
+                //maxEnrollment
+                int maxEnrollment = Integer.parseInt(words[3]);
 
-            //studentsEnrolled
-            List<Student> studentsEnrolled = new ArrayList<Student>();
-            String regx = "[]";
-            char[] ca = regx.toCharArray();
-            for (char c:ca) words[4] = words[4].replace("" + c, "");
-            String[] studentIds = words[4].split(";");
-            for (String studentId:studentIds)
-                for (Student student : StudentRepository.getStudents())
-                    if (Long.parseLong(studentId) == student.getStudentId()) studentsEnrolled.add(student);
+                //studentsEnrolled
+                List<Student> studentsEnrolled = new ArrayList<Student>();
+                String regx = "[]";
+                char[] ca = regx.toCharArray();
+                for (char c:ca) words[4] = words[4].replace("" + c, "");
+                String[] studentIds = words[4].split(";");
+                for (String studentId:studentIds)
+                    for (Student student : StudentRepository.getStudents())
+                        if (Long.parseLong(studentId) == student.getStudentId()) studentsEnrolled.add(student);
 
-            //credits
-            int credits = Integer.parseInt(words[5]);
+                //credits
+                int credits = Integer.parseInt(words[5]);
 
-            Course newCourse = new Course(name, courseId, teacher, maxEnrollment, studentsEnrolled, credits);
+                Course newCourse = new Course(name, courseId, teacher, maxEnrollment, studentsEnrolled, credits);
 
-            boolean alreadyExists = false;
-            for (Course c:courses)
-                if (c.getCourseId().equals(newCourse.getCourseId())) alreadyExists = true;
+                boolean alreadyExists = false;
+                for (Course c:courses)
+                    if (c.getCourseId().equals(newCourse.getCourseId())) {
+                        alreadyExists = true;
+                        break;
+                    }
 
-            if (!alreadyExists) courses.add(newCourse);
-        }
+                if (!alreadyExists) courses.add(newCourse);
+            }
+
+        return;
     }
 
     /**
@@ -171,7 +178,6 @@ public class CourseRepository implements ICrudRepository<Course> {
                 DeleteSpecificFileLines df = new DeleteSpecificFileLines();
                 df.deleteLines(this.fileName, String.valueOf(c.getCourseId()));
                 c.setName(course.getName());
-                c.setCourseId(course.getCourseId());
                 c.setTeacher(course.getTeacher());
                 c.setMaxEnrollment(course.getMaxEnrollment());
                 c.setStudentsEnrolled(course.getStudentsEnrolled());
@@ -183,5 +189,13 @@ public class CourseRepository implements ICrudRepository<Course> {
             }
 
         return course;
+    }
+
+    /**
+     * PRINT COURSES TO CONSOLE.
+     */
+    public void printCourses() {
+        for (Course course : courses)
+            System.out.println(course);
     }
 }

@@ -10,7 +10,7 @@ public class ModelReader {
         String line;
         List<String> listOfLines = new ArrayList<String>();
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("the_file_name"), Charset.forName("UTF-8")))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), Charset.forName("UTF-8")))) {
             while ((line = br.readLine()) != null) {
                 listOfLines.add(line);
             }

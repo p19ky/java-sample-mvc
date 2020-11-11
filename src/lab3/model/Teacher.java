@@ -38,4 +38,30 @@ public class Teacher extends Person{
                 "teacherId=" + teacherId +
                 '}';
     }
+
+    public String customToString() {
+        String splitter = ", ";
+        String listSplitter = ";";
+        StringBuilder teacher = new StringBuilder();
+
+        //name
+        teacher.append(this.getFirstName());
+        teacher.append(" ");
+        teacher.append(this.getLastName());
+        teacher.append(splitter);
+
+        //teacherId
+        teacher.append(String.valueOf(this.teacherId));
+        teacher.append(splitter);
+
+        //list of Courses
+        teacher.append("[");
+        for (Course course : CourseRepository.getCourses()){
+            teacher.append(String.valueOf(course.getCourseId()));
+            teacher.append(listSplitter);
+        }
+        teacher.append("]");
+
+        return teacher.toString();
+    }
 }
