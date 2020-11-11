@@ -3,10 +3,20 @@ package lab3.model;
 import java.util.List;
 
 public class Teacher extends Person{
+    private Long teacherId;
     private List<Course> courses;
 
-    public Teacher(List<Course> courses) {
+    public Teacher(Long teacherId, List<Course> courses) {
+        this.teacherId = teacherId;
         this.courses = courses;
+    }
+
+    public Long getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Long teacherId) {
+        this.teacherId = teacherId;
     }
 
     public List<Course> getCourses() {
@@ -20,7 +30,8 @@ public class Teacher extends Person{
     @Override
     public String toString() {
         return "Teacher{" +
-                "courses=" + courses +
+                "teacherId=" + teacherId +
+                ", courses=" + courses +
                 '}';
     }
 }

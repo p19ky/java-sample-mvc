@@ -1,16 +1,19 @@
 package lab3.model;
 
+import java.util.Iterator;
 import java.util.List;
 
-public class Course {
+public class Course{
     private String name;
+    private int courseId;
     private Person teacher;
     private int maxEnrollment;
     private List<Student> studentsEnrolled;
     private int credits;
 
-    public Course(String name, Person teacher, int maxEnrollment, List<Student> studentsEnrolled, int credits) {
+    public Course(String name, int courseId, Person teacher, int maxEnrollment, List<Student> studentsEnrolled, int credits) {
         this.name = name;
+        this.courseId = courseId;
         this.teacher = teacher;
         this.maxEnrollment = maxEnrollment;
         this.studentsEnrolled = studentsEnrolled;
@@ -23,6 +26,14 @@ public class Course {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
     }
 
     public Person getTeacher() {
@@ -61,6 +72,7 @@ public class Course {
     public String toString() {
         return "Course{" +
                 "name='" + name + '\'' +
+                ", courseId=" + courseId +
                 ", teacher=" + teacher +
                 ", maxEnrollment=" + maxEnrollment +
                 ", studentsEnrolled=" + studentsEnrolled +
@@ -68,3 +80,4 @@ public class Course {
                 '}';
     }
 }
+

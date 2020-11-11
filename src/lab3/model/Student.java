@@ -3,11 +3,11 @@ package lab3.model;
 import java.util.List;
 
 public class Student extends Person{
-    private long studentId;
+    private Long studentId;
     private int totalCredits;
     private List<Course> enrolledCourses;
 
-    public Student(long studentId, int totalCredits, List<Course> enrolledCourses) {
+    public Student(Long studentId, int totalCredits, List<Course> enrolledCourses) {
         this.studentId = studentId;
         this.totalCredits = totalCredits;
         this.enrolledCourses = enrolledCourses;
@@ -17,7 +17,7 @@ public class Student extends Person{
         return studentId;
     }
 
-    public void setStudentId(long studentId) {
+    public void setStudentId(Long studentId) {
         this.studentId = studentId;
     }
 
