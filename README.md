@@ -1,4 +1,4 @@
-# Hausaufgabe_3  Deadline 7-te Woche - 15 November 2020
+# Hausaufgabe_3  Deadline 7-te Woche - 16 November 2020
 
 Eine Universität braucht eine kleine Anwendung, an der sich Studierende für einen bestimmten Kurs anmelden können. Jeder Kurs hat einen Namen, einen Lehrer, eine maximale Anzahl von Schülern, eine Liste der eingeschriebenen Schüler und die Anzahl der Credits. Jeder Student ist eine Person, die auch einen Studentenausweis, eine Anzahl von eingeschriebenen Credits und eine Liste von eingeschriebenen Kurse hat. 
  
