@@ -1,4 +1,4 @@
-package lab3;
+package lab3.utilities;
 
 import java.io.*;
 import java.nio.charset.Charset;

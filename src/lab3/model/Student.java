@@ -13,7 +13,7 @@ public class Student extends Person{
         this.enrolledCourses = enrolledCourses;
     }
 
-    public long getStudentId() {
+    public Long getStudentId() {
         return studentId;
     }
 

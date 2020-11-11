@@ -1,14 +1,10 @@
 package lab3.repository;
 
-import lab3.DeleteSpecificFileLines;
-import lab3.ModelReader;
-import lab3.ModelWriter;
+import lab3.utilities.ModelReader;
+import lab3.utilities.DeleteSpecificFileLines;
+import lab3.utilities.ModelWriter;
 import lab3.model.Course;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
 import java.util.List;
 
 public class CourseRepository implements ICrudRepository<Course> {
@@ -110,7 +106,7 @@ public class CourseRepository implements ICrudRepository<Course> {
     }
 
     @Override
-    public Course update(Course entity) {
+    public Course update(Long id, Course entity) {
         return null;
     }
 }
