@@ -1,28 +1,82 @@
 package lab3.repository;
 
+import lab3.model.Student;
+import lab3.model.Teacher;
 import lab3.utilities.ModelReader;
 import lab3.utilities.DeleteSpecificFileLines;
 import lab3.utilities.ModelWriter;
 import lab3.model.Course;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CourseRepository implements ICrudRepository<Course> {
     private String fileName; //= "courses.txt";
-    private List<Course> courses;
+    private static List<Course> courses;
 
-    public CourseRepository(String fileName) {
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
-    public void fillCourseRepositoryWithCoursesFromFile() {
+    public static List<Course> getCourses() {
+        return courses;
+    }
+
+    public static void setCourses(List<Course> newCourses) {
+        courses = newCourses;
+    }
+
+    public CourseRepository(String fileName) {
+        this.fileName = fileName;
+        this.fillCourseRepositoryWithCoursesFromFile();
+    }
+
+    /**
+     * Fills the courses List with the courses from 'this.fileName'
+     */
+    private void fillCourseRepositoryWithCoursesFromFile() {
         List<String> listOfLines = new ModelReader().getLinesFromFile(this.fileName);
         for (String line : listOfLines) {
             String[] words = line.split(", ");
+
+            //name
             String name = words[0];
+
+            //courseId
             Long courseId = Long.parseLong(words[1]);
 
-            //TODO
+            //teacher
+            Teacher teacher = null;
+            for (Teacher t : TeacherRepository.getTeachers())
+                if (t.getTeacherId() == Long.parseLong(words[2])) teacher = t;
+
+            //maxEnrollment
+            int maxEnrollment = Integer.parseInt(words[3]);
+
+            //studentsEnrolled
+            List<Student> studentsEnrolled = new ArrayList<Student>();
+            String regx = "[]";
+            char[] ca = regx.toCharArray();
+            for (char c:ca) words[4] = words[4].replace("" + c, "");
+            String[] studentIds = words[4].split(";");
+            for (String studentId:studentIds)
+                for (Student student : StudentRepository.getStudents())
+                    if (Long.parseLong(studentId) == student.getStudentId()) studentsEnrolled.add(student);
+
+            //credits
+            int credits = Integer.parseInt(words[5]);
+
+            Course newCourse = new Course(name, courseId, teacher, maxEnrollment, studentsEnrolled, credits);
+
+            boolean alreadyExists = false;
+            for (Course c:courses)
+                if (c.getCourseId().equals(newCourse.getCourseId())) alreadyExists = true;
+
+            if (!alreadyExists) courses.add(newCourse);
         }
     }
 
@@ -32,15 +86,11 @@ public class CourseRepository implements ICrudRepository<Course> {
      */
     @Override
     public Course findOne(Long id) {
-        for (Course course : this.courses) {
-            if (course.getCourseId() == id) {
-                //Course with this the given id was found.
-                return course;
-            }
-        }
+        //Course with this the given id was found.
+        return courses.stream().filter(course -> course.getCourseId().equals(id)).findFirst().orElse(null);
 
         //Course with given id does not exist.
-        return null;
+        //return null
     }
 
     /**
@@ -48,12 +98,12 @@ public class CourseRepository implements ICrudRepository<Course> {
      */
     @Override
     public List<Course> findAll() {
-        return this.courses;
+        return courses;
     }
 
     /**
      *
-     * @param course
+     * @param course given course to be saved.
      * @return course if it already exists or null if given course was saved successfully to database.
      */
     @Override
@@ -62,12 +112,8 @@ public class CourseRepository implements ICrudRepository<Course> {
 
         for (String line : listOfLines) {
             String[] words = line.split(", ");
-            for (Course c : this.courses) {
-                if (c.getCourseId() == Long.parseLong(words[1])) {
-                    //Course given already exists.
-                    return c;
-                }
-            }
+            //Course given already exists.
+            for (Course c : courses) if (c.getCourseId() == Long.parseLong(words[1])) return c;
         }
 
         String newLine = course.customToString();
@@ -87,14 +133,19 @@ public class CourseRepository implements ICrudRepository<Course> {
     @Override
     public Course delete(Long id) {
         Course courseToReturn = null;
-
-        for (int i = 0; i < this.courses.size(); i++) {
-            if (this.courses.get(i).getCourseId() == id) {
-                courseToReturn = this.courses.get(i);
-                this.courses.remove(i);
+        int index = -1;
+        for (int i = 0; i < courses.size(); i++) {
+            if (courses.get(i).getCourseId().equals(id)) {
+                courseToReturn = courses.get(i);
+                index = i;
             }
         }
 
+        if (index != -1) {
+            courses.remove(index);
+        }
+
+        //if course deleted
         if (courseToReturn != null)
         {
             DeleteSpecificFileLines df = new DeleteSpecificFileLines();
@@ -102,11 +153,35 @@ public class CourseRepository implements ICrudRepository<Course> {
             return courseToReturn;
         }
 
+        //course not found.
         return null;
     }
 
+    /**
+     *
+     * @param id id must not be null
+     * @param course with which the found course should be updated.
+     * @return null if update successful. Otherwise, the given course. (ex. if given id was not found)
+     */
     @Override
-    public Course update(Long id, Course entity) {
-        return null;
+    public Course update(Long id, Course course) {
+
+        for (Course c : courses)
+            if (c.getCourseId().equals(id)) {
+                DeleteSpecificFileLines df = new DeleteSpecificFileLines();
+                df.deleteLines(this.fileName, String.valueOf(c.getCourseId()));
+                c.setName(course.getName());
+                c.setCourseId(course.getCourseId());
+                c.setTeacher(course.getTeacher());
+                c.setMaxEnrollment(course.getMaxEnrollment());
+                c.setStudentsEnrolled(course.getStudentsEnrolled());
+                c.setCredits(course.getCredits());
+                String newLine = c.customToString();
+                ModelWriter mw = new ModelWriter();
+                mw.writeToFile(this.fileName, newLine);
+                return null;
+            }
+
+        return course;
     }
 }

@@ -31,8 +31,9 @@ public interface ICrudRepository<E> {
     E delete(Long id);
 
     /**
+     * @param id id must not be null
      * @param entity entity must not be null
      * @return null - if the entity is updated, otherwise returns the entity - (e.g id does not exist).
      */
-    E update(E entity);
+    E update(Long id, E entity);
 }

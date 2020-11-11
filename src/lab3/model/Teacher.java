@@ -1,14 +1,16 @@
 package lab3.model;
 
+import lab3.repository.CourseRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Teacher extends Person{
     private Long teacherId;
-    private List<Course> courses;
 
-    public Teacher(Long teacherId, List<Course> courses) {
+    public Teacher(Long teacherId, String firstName, String lastName) {
+        super(firstName, lastName);
         this.teacherId = teacherId;
-        this.courses = courses;
     }
 
     public Long getTeacherId() {
@@ -20,18 +22,20 @@ public class Teacher extends Person{
     }
 
     public List<Course> getCourses() {
-        return courses;
-    }
+        List<Course> myCourses = new ArrayList<Course>();
+        for (Course course: CourseRepository.getCourses()) {
+            if (course.getTeacher().getTeacherId().equals(teacherId)) {
+                myCourses.add(course);
+            }
+        }
 
-    public void setCourses(List<Course> courses) {
-        this.courses = courses;
+        return myCourses;
     }
 
     @Override
     public String toString() {
         return "Teacher{" +
                 "teacherId=" + teacherId +
-                ", courses=" + courses +
                 '}';
     }
 }

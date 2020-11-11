@@ -5,13 +5,13 @@ import java.util.List;
 
 public class Course{
     private String name;
-    private int courseId;
-    private Person teacher;
+    private Long courseId;
+    private Teacher teacher;
     private int maxEnrollment;
     private List<Student> studentsEnrolled;
     private int credits;
 
-    public Course(String name, int courseId, Person teacher, int maxEnrollment, List<Student> studentsEnrolled, int credits) {
+    public Course(String name, Long courseId, Teacher teacher, int maxEnrollment, List<Student> studentsEnrolled, int credits) {
         this.name = name;
         this.courseId = courseId;
         this.teacher = teacher;
@@ -28,19 +28,19 @@ public class Course{
         this.name = name;
     }
 
-    public int getCourseId() {
+    public Long getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(int courseId) {
+    public void setCourseId(Long courseId) {
         this.courseId = courseId;
     }
 
-    public Person getTeacher() {
+    public Teacher getTeacher() {
         return teacher;
     }
 
-    public void setTeacher(Person teacher) {
+    public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
     }
 
@@ -78,6 +78,42 @@ public class Course{
                 ", studentsEnrolled=" + studentsEnrolled +
                 ", credits=" + credits +
                 '}';
+    }
+
+    public String customToString() {
+        String splitter = ", ";
+        String listSplitter = ";";
+        StringBuilder course = new StringBuilder();
+
+        //name
+        course.append(this.name);
+        course.append(splitter);
+
+        //courseId
+        course.append(String.valueOf(this.courseId));
+        course.append(splitter);
+
+        //teacherId
+        course.append(String.valueOf(this.teacher.getTeacherId()));
+        course.append(splitter);
+
+        //maxEnrollment
+        course.append(String.valueOf(this.maxEnrollment));
+        course.append(splitter);
+
+        //list of studentsEnrolled
+        course.append("[");
+        for (Student student:this.studentsEnrolled) {
+            course.append(String.valueOf(student.getStudentId()));
+            course.append(listSplitter);
+        }
+        course.append("]");
+        course.append(splitter);
+
+        //credits
+        course.append(String.valueOf(this.credits));
+
+        return course.toString();
     }
 }
 

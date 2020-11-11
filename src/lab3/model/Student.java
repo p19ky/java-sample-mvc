@@ -1,16 +1,18 @@
 package lab3.model;
 
+import lab3.repository.CourseRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Student extends Person{
     private Long studentId;
     private int totalCredits;
-    private List<Course> enrolledCourses;
 
-    public Student(Long studentId, int totalCredits, List<Course> enrolledCourses) {
+    public Student(Long studentId, int totalCredits, List<Course> enrolledCourses, String firstName, String lastName) {
+        super(firstName, lastName);
         this.studentId = studentId;
         this.totalCredits = totalCredits;
-        this.enrolledCourses = enrolledCourses;
     }
 
     public Long getStudentId() {
@@ -30,11 +32,13 @@ public class Student extends Person{
     }
 
     public List<Course> getEnrolledCourses() {
-        return enrolledCourses;
-    }
+        List<Course> myCourses = new ArrayList<Course>();
 
-    public void setEnrolledCourses(List<Course> enrolledCourses) {
-        this.enrolledCourses = enrolledCourses;
+        for (Course course: CourseRepository.getCourses())
+            for (Student student:course.getStudentsEnrolled())
+                if (student.getStudentId().equals(studentId)) myCourses.add(course);
+
+        return myCourses;
     }
 
     @Override
@@ -42,7 +46,6 @@ public class Student extends Person{
         return "Student{" +
                 "studentId=" + studentId +
                 ", totalCredits=" + totalCredits +
-                ", enrolledCourses=" + enrolledCourses +
                 '}';
     }
 }
