@@ -31,12 +31,23 @@ public class Student extends Person {
         this.totalCredits = totalCredits;
     }
 
-    public List<Course> getEnrolledCourses() {
+    /**
+     * @return courses in which this student is enrolled.
+     */
+    public List<Course> getEnrolledCourses(List<Course> listToSearchIn) {
         List<Course> myCourses = new ArrayList<Course>();
 
-        for (Course course: CourseRepository.getCourses())
-            for (Student student:course.getStudentsEnrolled())
-                if (student.getStudentId().equals(studentId)) myCourses.add(course);
+        if (listToSearchIn.isEmpty()) {
+            for (Course course : CourseRepository.getCourses())
+                for (Student student : course.getStudentsEnrolled())
+                    if (student.getStudentId().equals(studentId)) myCourses.add(course);
+        } else {
+            for (Course course : CourseRepository.getCourses())
+                for (Student student : course.getStudentsEnrolled())
+                    if (student.getStudentId().equals(studentId)) myCourses.add(course);
+        }
+
+
 
         return myCourses;
     }
@@ -53,7 +64,7 @@ public class Student extends Person {
      *
      * @return String value of the student which is accepted in the text file format.
      */
-    public String customToString() {
+    public String customToString(List<Course> listToSearchIn) {
         String splitter = ", ";
         String listSplitter = ";";
         StringBuilder student = new StringBuilder();
@@ -74,11 +85,13 @@ public class Student extends Person {
 
         //list of enrolledCourses
         student.append("[");
-        for (Course course : getEnrolledCourses()) {
+        for (Course course : this.getEnrolledCourses(listToSearchIn)) {
             student.append(String.valueOf(course.getCourseId()));
             student.append(listSplitter);
         }
         student.append("]");
+
+
 
         return student.toString();
     }

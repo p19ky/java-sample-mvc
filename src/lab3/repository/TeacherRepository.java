@@ -11,17 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeacherRepository implements ICrudRepository<Teacher>{
-    private String fileName;
-    private static List<Teacher> teachers;
+    public static String fileName;
+    public static List<Teacher> teachers;
 
-    public TeacherRepository(String fileName) {
-        this.fileName = fileName;
+    public TeacherRepository(String fileNameNew) {
+        fileName = fileNameNew;
         teachers = new ArrayList<Teacher>();
         this.fillTeacherRepositoryWithTeachersFromFile();
     }
 
     private void fillTeacherRepositoryWithTeachersFromFile() {
-        List<String> listOfLines = new ModelReader().getLinesFromFile(this.fileName);
+        List<String> listOfLines = new ModelReader().getLinesFromFile(fileName);
         for (String line : listOfLines) {
             String[] words = line.split(", ");
 
@@ -54,8 +54,8 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
         return fileName;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFileName(String fileNameNew) {
+        fileName = fileNameNew;
     }
 
     public static List<Teacher> getTeachers() {
@@ -72,12 +72,9 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
      * @return The teacher with the given id or null if none was found.
      */
     @Override
-    public Teacher findOne(Long id) {
-        for (Teacher teacher : teachers)
-            if (teacher.getTeacherId().equals(id))
-                return teacher;
-
-        return null;
+    public Teacher findOne(Long id)
+    {
+        return teachers.stream().filter(teacher -> teacher.getTeacherId().equals(id)).findFirst().orElse(null);
     }
 
     /**
@@ -91,7 +88,7 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
 
     /**
      *
-     * @param teacher
+     * @param teacher the teacher which has to be saved to databse
      * @return null- if the given teacher is saved otherwise returns the teacher (id already exists)
      */
     @Override
@@ -100,9 +97,11 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
             if (t.getTeacherId().equals(teacher.getTeacherId()))
                 return teacher;
 
-        String newLine = teacher.customToString();
+
+        List<Course> emptyCourseList = new ArrayList<Course>(){};
+        String newLine = teacher.customToString(emptyCourseList);
         ModelWriter mw = new ModelWriter();
-        mw.writeToFile(this.fileName, newLine);
+        mw.writeToFile(fileName, newLine);
         teachers.add(teacher);
 
         return null;
@@ -132,7 +131,7 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
         if (teacherToReturn != null)
         {
             DeleteSpecificFileLines df = new DeleteSpecificFileLines();
-            df.deleteLines(this.fileName, String.valueOf(teacherToReturn.getTeacherId()));
+            df.deleteLines(fileName, String.valueOf(teacherToReturn.getTeacherId()));
             return teacherToReturn;
         }
 
@@ -151,12 +150,15 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
         for (Teacher t : teachers)
             if (t.getTeacherId().equals(id)) {
                 DeleteSpecificFileLines df = new DeleteSpecificFileLines();
-                df.deleteLines(this.fileName, String.valueOf(t.getTeacherId()));
+                df.deleteLines(fileName, String.valueOf(t.getTeacherId()));
                 t.setFirstName(teacher.getFirstName());
                 t.setLastName(teacher.getLastName());
-                String newLine = t.customToString();
+
+                List<Course> emptyCourseList = new ArrayList<Course>(){};
+
+                String newLine = t.customToString(emptyCourseList);
                 ModelWriter mw = new ModelWriter();
-                mw.writeToFile(this.fileName, newLine);
+                mw.writeToFile(fileName, newLine);
                 return null;
             }
 
@@ -169,9 +171,12 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
     public void printTeachers() {
         for (Teacher teacher : teachers) {
             StringBuilder str = new StringBuilder();
-            str.append(teacher.toString() + " courses: [");
-            for (Course course : teacher.getCourses())
-                str.append(course.getName() + ";");
+            str.append(teacher.toString());
+            str.append(" courses: [");
+            for (Course course : teacher.getCourses(new ArrayList<Course>(){})) {
+                str.append(course.getName());
+                str.append(";");
+            }
             str.append("]");
             System.out.println(str.toString());
         }

@@ -21,13 +21,23 @@ public class Teacher extends Person{
         this.teacherId = teacherId;
     }
 
-    public List<Course> getCourses() {
+    public List<Course> getCourses(List<Course> listToSearchIn) {
         List<Course> myCourses = new ArrayList<Course>();
-        for (Course course: CourseRepository.getCourses()) {
-            if (course.getTeacher().getTeacherId().equals(teacherId)) {
-                myCourses.add(course);
+
+        if (listToSearchIn.isEmpty()) {
+            for (Course course: CourseRepository.getCourses()) {
+                if (course.getTeacher().getTeacherId().equals(teacherId)) {
+                    myCourses.add(course);
+                }
+            }
+        } else {
+            for (Course course: listToSearchIn) {
+                if (course.getTeacher().getTeacherId().equals(teacherId)) {
+                    myCourses.add(course);
+                }
             }
         }
+
 
         return myCourses;
     }
@@ -39,7 +49,7 @@ public class Teacher extends Person{
                 '}';
     }
 
-    public String customToString() {
+    public String customToString(List<Course> listToSearchIn) {
         String splitter = ", ";
         String listSplitter = ";";
         StringBuilder teacher = new StringBuilder();
@@ -56,11 +66,12 @@ public class Teacher extends Person{
 
         //list of Courses
         teacher.append("[");
-        for (Course course : CourseRepository.getCourses()){
+        for (Course course : this.getCourses(listToSearchIn)){
             teacher.append(String.valueOf(course.getCourseId()));
             teacher.append(listSplitter);
         }
         teacher.append("]");
+
 
         return teacher.toString();
     }

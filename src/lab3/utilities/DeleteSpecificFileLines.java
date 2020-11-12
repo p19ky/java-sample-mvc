@@ -20,7 +20,7 @@ public class DeleteSpecificFileLines {
             //unless content matches data to be removed.
             while ((line = br.readLine()) != null) {
                 String[] words = line.split(", ");
-                if (words[1] == equalToCondition) {
+                if (!(words[1].equals(equalToCondition))) {
                     pw.println(line);
                     pw.flush();
                 }

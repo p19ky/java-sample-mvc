@@ -1,17 +1,24 @@
 package lab3.console;
 
 import lab3.controller.CourseController;
+import lab3.controller.RegistrationSystem;
 import lab3.controller.StudentController;
 import lab3.controller.TeacherController;
+import lab3.model.Course;
+import lab3.model.Student;
+import lab3.repository.CourseRepository;
+import lab3.repository.StudentRepository;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 public class Console {
     StudentController studentController = new StudentController();
     TeacherController teacherController = new TeacherController();
     CourseController courseController = new CourseController();
+    RegistrationSystem registrationSystem = new RegistrationSystem();
 
     public void printConsole() {
         System.out.println();
@@ -45,7 +52,113 @@ public class Console {
             while (!input.equals("0")) {
                 // Printing the read line
 
-                if (input.trim().equals("4")) {
+
+                if (input.trim().equals("1")) {
+
+                    List<Course> listOfCourses = registrationSystem.getAllCourses();
+
+                    if (listOfCourses.isEmpty()) {
+                        System.out.println("NO COURSES AVAILABLE AT THE MOMENT!");
+                        break;
+                    }
+
+                    System.out.println();
+                    System.out.println("\nCourses:\n");
+                    System.out.println();
+                    for (Course c : listOfCourses)
+                        System.out.println(c.toString());
+                    System.out.println();
+                    System.out.println("\nStudents:\n");
+                    System.out.println();
+                    for (Student s : StudentRepository.students)
+                        System.out.println(s.toString());
+                    System.out.println();
+
+                    System.out.println("Enter Course id:\n");
+
+                    String inCourseId = reader.readLine();
+
+                    System.out.println("Enter Student id:\n");
+
+                    String inStudentId = reader.readLine();
+
+                    Course courseForCall = null;
+                    Student studentForCall = null;
+
+                    for (Course c : listOfCourses) {
+                        if (c.getCourseId().equals(Long.parseLong(inCourseId.trim()))) {
+                            courseForCall = c;
+                            break;
+                        }
+                    }
+
+                    if (courseForCall == null) {
+                        System.out.println("COURSE ID IS NOT AVAILABLE");
+                        continue;
+                    }
+
+                    for (Student s : StudentRepository.students) {
+                        if (s.getStudentId().equals(Long.parseLong(inStudentId.trim()))) {
+                            studentForCall = s;
+                            break;
+                        }
+                    }
+
+                    if (studentForCall == null) {
+                        System.out.println("STUDENT ID IS NOT AVAILABLE");
+                        continue;
+                    }
+
+                    registrationSystem.register(courseForCall, studentForCall);
+
+                } else if (input.trim().equals("2")) {
+
+                    List<Course> courses = registrationSystem.retrieveCoursesWithFreePlaces();
+                    System.out.println();
+                    System.out.println("Courses with free available places:\n");
+                    System.out.println();
+                    for (Course course : courses)
+                        System.out.println(course.toString());
+
+                } else if (input.trim().equals("3")) {
+
+                    List<Course> listOfCourses = registrationSystem.getAllCourses();
+
+                    if (listOfCourses.isEmpty()) {
+                        System.out.println("NO COURSES AVAILABLE AT THE MOMENT!");
+                        break;
+                    }
+
+                    System.out.println();
+                    System.out.println("\nCourses:\n");
+                    System.out.println();
+                    for (Course c : listOfCourses)
+                        System.out.println(c.toString());
+                    System.out.println();
+
+                    System.out.println("Enter Course id:\n");
+
+                    String inCourseId = reader.readLine();
+
+                    Course courseForCall = null;
+
+                    for (Course c : CourseRepository.getCourses()) {
+                        if (c.getCourseId().equals(Long.parseLong(inCourseId.trim()))) {
+                            courseForCall = c;
+                            break;
+                        }
+                    }
+
+                    if (courseForCall == null) {
+                        System.out.println("COURSE ID IS NOT AVAILABLE");
+                        continue;
+                    }
+
+                    System.out.println("\nSTUDENTS ENROLLED IN GIVEN COURSE:\n\n");
+                    for (Student stud : registrationSystem.retrieveStudentsEnrolledForACourse(courseForCall))
+                        System.out.println(stud.toString());
+
+                } else if (input.trim().equals("4")) {
                     this.courseController.print();
                 }
                 else if (input.trim().equals("5")) {

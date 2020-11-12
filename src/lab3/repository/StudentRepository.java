@@ -10,17 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentRepository implements ICrudRepository<Student>{
-    private String fileName;
-    private static List<Student> students;
+    public static String fileName;
+    public static List<Student> students;
 
-    public StudentRepository(String fileName) {
-        this.fileName = fileName;
-        students = new ArrayList<Student>();
+    public StudentRepository(String fileNameNew) {
+        fileName = fileNameNew;
+        students = new ArrayList<>();
         this.fillStudentRepositoryWithStudentsFromFile();
     }
 
     private void fillStudentRepositoryWithStudentsFromFile() {
-        List<String> listOfLines = new ModelReader().getLinesFromFile(this.fileName);
+        List<String> listOfLines = new ModelReader().getLinesFromFile(fileName);
         for (String line : listOfLines) {
             String[] words = line.split(", ");
 
@@ -50,14 +50,6 @@ public class StudentRepository implements ICrudRepository<Student>{
         }
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     public static List<Student> getStudents() {
         return students;
     }
@@ -72,12 +64,9 @@ public class StudentRepository implements ICrudRepository<Student>{
      * @return the student with the specified id or null - if there is no student with the given id
      */
     @Override
-    public Student findOne(Long id) {
-        for (Student student : students)
-            if (student.getStudentId().equals(id))
-                return student;
-
-        return null;
+    public Student findOne(Long id)
+    {
+        return students.stream().filter(student -> student.getStudentId().equals(id)).findFirst().orElse(null);
     }
 
     /**
@@ -100,9 +89,10 @@ public class StudentRepository implements ICrudRepository<Student>{
             if (stud.getStudentId().equals(student.getStudentId()))
                 return student;
 
-        String newLine = student.customToString();
+
+        String newLine = student.customToString(new ArrayList<Course>(){});
         ModelWriter mw = new ModelWriter();
-        mw.writeToFile(this.fileName, newLine);
+        mw.writeToFile(fileName, newLine);
         students.add(student);
 
         return null;
@@ -124,7 +114,24 @@ public class StudentRepository implements ICrudRepository<Student>{
             }
         }
 
+        //student found.
         if (index != -1) {
+            List<Student> newStudentArray;
+            for (Course course : CourseRepository.getCourses()) {
+                newStudentArray = new ArrayList<Student>(){};
+                for (Student student : course.getStudentsEnrolled()) {
+                    if (!(student.getStudentId().equals(students.get(index).getStudentId())))
+                        newStudentArray.add(student);
+                }
+                course.setStudentsEnrolled(newStudentArray);
+
+                DeleteSpecificFileLines df = new DeleteSpecificFileLines();
+                df.deleteLines(CourseRepository.fileName, String.valueOf(course.getCourseId()));
+                String newLine = course.customToString();
+                ModelWriter mw = new ModelWriter();
+                mw.writeToFile(CourseRepository.fileName, newLine);
+            }
+
             students.remove(index);
         }
 
@@ -132,11 +139,12 @@ public class StudentRepository implements ICrudRepository<Student>{
         if (studentToReturn != null)
         {
             DeleteSpecificFileLines df = new DeleteSpecificFileLines();
-            df.deleteLines(this.fileName, String.valueOf(studentToReturn.getStudentId()));
+            df.deleteLines(fileName, String.valueOf(studentToReturn.getStudentId()));
+            System.out.println("STUDENT DELETED SUCCESSFULLY!");
             return studentToReturn;
         }
 
-        //student not found.
+        System.out.println("STUDENT WITH GIVEN ID DOES NOT EXIST!");
         return null;
     }
 
@@ -148,19 +156,46 @@ public class StudentRepository implements ICrudRepository<Student>{
      */
     @Override
     public Student update(Long id, Student student) {
+
         for (Student stud : students)
             if (stud.getStudentId().equals(id)) {
+
+                if (!(stud.getStudentId().equals(student.getStudentId())))
+                {
+                    System.out.println("STUDENT ID CAN'T BE CHANGED!");
+                    return student;
+                }
+
                 DeleteSpecificFileLines df = new DeleteSpecificFileLines();
-                df.deleteLines(this.fileName, String.valueOf(stud.getStudentId()));
+                df.deleteLines(fileName, String.valueOf(stud.getStudentId()));
+
                 stud.setFirstName(student.getFirstName());
                 stud.setLastName(student.getLastName());
-                stud.setTotalCredits(student.getTotalCredits());
-                String newLine = stud.customToString();
+
+                String newLine = stud.customToString(new ArrayList<Course>(){});
                 ModelWriter mw = new ModelWriter();
-                mw.writeToFile(this.fileName, newLine);
+                mw.writeToFile(fileName, newLine);
+
+                for (Course course : CourseRepository.getCourses()) {
+                    List<Student> newStudArray = new ArrayList<Student>(){};
+                    for (Student st : course.getStudentsEnrolled()) {
+                        if (!(st.getStudentId().equals(stud.getStudentId()))) {
+                            newStudArray.add(st);
+                        }
+                    }
+                    course.setStudentsEnrolled(newStudArray);
+
+                    df.deleteLines(CourseRepository.fileName, String.valueOf(course.getCourseId()));
+                    newLine = course.customToString();
+                    mw.writeToFile(CourseRepository.fileName, newLine);
+                }
+
+
+                System.out.println("STUDENT UPDATED SUCCESSFULLY!");
                 return null;
             }
 
+        System.out.println("STUDENT WITH THE GIVEN ID DOES NOT EXIST!");
         return student;
     }
 
@@ -170,9 +205,12 @@ public class StudentRepository implements ICrudRepository<Student>{
     public void printStudents() {
         for (Student student : students) {
             StringBuilder str = new StringBuilder();
-            str.append(student.toString() + " enrolledCourses: [");
-            for (Course course : student.getEnrolledCourses())
-                str.append(course.getName() + ";");
+            str.append(student.toString());
+            str.append(" enrolledCourses: [");
+            for (Course course : student.getEnrolledCourses(new ArrayList<Course>(){})) {
+                str.append(course.getName());
+                str.append(";");
+            }
             str.append("]");
             System.out.println(str.toString());
         }

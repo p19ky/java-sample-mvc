@@ -8,18 +8,20 @@ import lab3.utilities.ModelWriter;
 import lab3.model.Course;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class CourseRepository implements ICrudRepository<Course> {
-    private String fileName; //= "courses.txt";
-    private static List<Course> courses;
+    public static String fileName; //= "courses.txt";
+    public static List<Course> courses;
 
     public String getFileName() {
         return fileName;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFileName(String fileNameNew) {
+        fileName = fileNameNew;
     }
 
     public static List<Course> getCourses() {
@@ -30,8 +32,8 @@ public class CourseRepository implements ICrudRepository<Course> {
         courses = newCourses;
     }
 
-    public CourseRepository(String fileName) {
-        this.fileName = fileName;
+    public CourseRepository(String fileNameNew) {
+        fileName = fileNameNew;
         courses = new ArrayList<Course>();
         this.fillCourseRepositoryWithCoursesFromFile();
     }
@@ -40,7 +42,7 @@ public class CourseRepository implements ICrudRepository<Course> {
      * Fills the courses List with the courses from 'this.fileName'
      */
     private void fillCourseRepositoryWithCoursesFromFile() {
-        List<String> listOfLines = new ModelReader().getLinesFromFile(this.fileName);
+        List<String> listOfLines = new ModelReader().getLinesFromFile(fileName);
         if (StudentRepository.getStudents() != null && TeacherRepository.getTeachers() != null)
             for (String line : listOfLines) {
                 String[] words = line.split(", ");
@@ -84,7 +86,6 @@ public class CourseRepository implements ICrudRepository<Course> {
                 if (!alreadyExists) courses.add(newCourse);
             }
 
-        return;
     }
 
     /**
@@ -92,12 +93,9 @@ public class CourseRepository implements ICrudRepository<Course> {
      * @return The course with the given id or null if none was found.
      */
     @Override
-    public Course findOne(Long id) {
-        //Course with this the given id was found.
+    public Course findOne(Long id)
+    {
         return courses.stream().filter(course -> course.getCourseId().equals(id)).findFirst().orElse(null);
-
-        //Course with given id does not exist.
-        //return null
     }
 
     /**
@@ -115,20 +113,32 @@ public class CourseRepository implements ICrudRepository<Course> {
      */
     @Override
     public Course save(Course course) {
-        List<String> listOfLines = new ModelReader().getLinesFromFile(this.fileName);
+        List<String> listOfLines = new ModelReader().getLinesFromFile(fileName);
 
         for (String line : listOfLines) {
             String[] words = line.split(", ");
-            //Course given already exists.
+
+            System.out.println("COURSE ALREADY EXISTS!");
             for (Course c : courses) if (c.getCourseId() == Long.parseLong(words[1])) return c;
         }
 
+
         String newLine = course.customToString();
         ModelWriter mw = new ModelWriter();
-        mw.writeToFile(this.fileName, newLine);
+        mw.writeToFile(fileName, newLine);
         courses.add(course);
 
-        //Course given successfully saved to database.
+        //update courses for teacher that has been selected for new course.
+        for (Teacher teacher : TeacherRepository.getTeachers()) {
+            if (teacher.getTeacherId().equals(course.getTeacher().getTeacherId())) {
+                DeleteSpecificFileLines df = new DeleteSpecificFileLines();
+                df.deleteLines(TeacherRepository.fileName, String.valueOf(teacher.getTeacherId()));
+                newLine = teacher.customToString(new ArrayList<Course>(){});
+                mw.writeToFile(TeacherRepository.fileName, newLine);
+            }
+        }
+
+        System.out.println("COURSE SUCCESSFULLY ADDED!");
         return null;
     }
 
@@ -145,10 +155,42 @@ public class CourseRepository implements ICrudRepository<Course> {
             if (courses.get(i).getCourseId().equals(id)) {
                 courseToReturn = courses.get(i);
                 index = i;
+                break;
             }
         }
 
         if (index != -1) {
+            List<Course> oldCourses = new ArrayList<Course>(){};
+            Collections.copy(oldCourses, courses);
+            oldCourses.remove(index);
+
+            //delete the removed course from enrolledCourses of students and decrease students totalCredits.
+            for (Student student : StudentRepository.students){
+                for (Course enrolledCourse : student.getEnrolledCourses(new ArrayList<Course>(){})) {
+                    if (enrolledCourse.getCourseId().equals(courseToReturn.getCourseId())) {
+                        student.setTotalCredits(student.getTotalCredits() - enrolledCourse.getCredits());
+                        DeleteSpecificFileLines df = new DeleteSpecificFileLines();
+                        df.deleteLines(StudentRepository.fileName, String.valueOf(student.getStudentId()));
+                        String newLine = student.customToString(oldCourses);
+                        ModelWriter mw = new ModelWriter();
+                        mw.writeToFile(StudentRepository.fileName, newLine);
+                        break;
+                    }
+                }
+            }
+
+            //delete the removed course from Courses of teachers.
+            for (Teacher teacher : TeacherRepository.teachers)
+                for (Course course : teacher.getCourses(new ArrayList<Course>(){}))
+                    if (course.getCourseId().equals(courseToReturn.getCourseId())){
+                        DeleteSpecificFileLines df = new DeleteSpecificFileLines();
+                        df.deleteLines(TeacherRepository.fileName, String.valueOf(teacher.getTeacherId()));
+                        String newLine = teacher.customToString(oldCourses);
+                        ModelWriter mw = new ModelWriter();
+                        mw.writeToFile(TeacherRepository.fileName, newLine);
+                        break;
+                    }
+
             courses.remove(index);
         }
 
@@ -156,11 +198,12 @@ public class CourseRepository implements ICrudRepository<Course> {
         if (courseToReturn != null)
         {
             DeleteSpecificFileLines df = new DeleteSpecificFileLines();
-            df.deleteLines(this.fileName, String.valueOf(courseToReturn.getCourseId()));
+            df.deleteLines(fileName, String.valueOf(courseToReturn.getCourseId()));
+            System.out.println("COURSE DELETED SUCCESSFULLY!");
             return courseToReturn;
         }
 
-        //course not found.
+        System.out.println("PROVIDED COURSE WAS NOT FOUND!");
         return null;
     }
 
@@ -173,21 +216,84 @@ public class CourseRepository implements ICrudRepository<Course> {
     @Override
     public Course update(Long id, Course course) {
 
-        for (Course c : courses)
-            if (c.getCourseId().equals(id)) {
-                DeleteSpecificFileLines df = new DeleteSpecificFileLines();
-                df.deleteLines(this.fileName, String.valueOf(c.getCourseId()));
-                c.setName(course.getName());
-                c.setTeacher(course.getTeacher());
-                c.setMaxEnrollment(course.getMaxEnrollment());
-                c.setStudentsEnrolled(course.getStudentsEnrolled());
-                c.setCredits(course.getCredits());
-                String newLine = c.customToString();
-                ModelWriter mw = new ModelWriter();
-                mw.writeToFile(this.fileName, newLine);
-                return null;
+        if (!(id.equals(course.getCourseId()))) {
+            System.out.println("COURSE ID CAN'T BE CHANGED!");
+            return course;
+        }
+
+        Course removedCourse = null;
+        int index = -1;
+        for (int i = 0; i < courses.size(); i++) {
+            if (courses.get(i).getCourseId().equals(id)) {
+                removedCourse = courses.get(i);
+                index = i;
+                break;
+            }
+        }
+
+        if (index != -1) {
+            if (course.getMaxEnrollment() < removedCourse.getMaxEnrollment())
+            {
+                System.out.println("MAX ENROLLMENT NUMBER CAN'T BE CHANGED TO A SMALLER VALUE!");
+                return course;
             }
 
+            List<Course> oldCoursesWithoutRemovedOne = new ArrayList<Course>(){};
+            Collections.copy(oldCoursesWithoutRemovedOne, courses);
+            oldCoursesWithoutRemovedOne.remove(index);
+
+            DeleteSpecificFileLines df = new DeleteSpecificFileLines();
+            df.deleteLines(fileName, String.valueOf(courses.get(index).getCourseId()));
+
+            Course newCourse =
+                    new Course(course.getName(), course.getCourseId(), course.getTeacher(), course.getMaxEnrollment(), course.getStudentsEnrolled(), course.getCredits());
+            courses.add(newCourse);
+
+            String newLine = newCourse.customToString();
+            ModelWriter mw = new ModelWriter();
+            mw.writeToFile(fileName, newLine);
+
+            /* --------------------------- */
+
+            //teacher was changed.
+            if (!(course.getTeacher().getTeacherId().equals(newCourse.getTeacher().getTeacherId()))) {
+                for (Teacher teacher : TeacherRepository.teachers)
+                    for (Course c : teacher.getCourses(new ArrayList<Course>(){}))
+                        if (c.getCourseId().equals(courses.get(index).getCourseId())) {
+                            df.deleteLines(TeacherRepository.fileName, String.valueOf(teacher.getTeacherId()));
+                            newLine = teacher.customToString(oldCoursesWithoutRemovedOne);
+                            mw.writeToFile(TeacherRepository.fileName, newLine);
+                            break;
+                        }
+
+                for (Teacher teacher : TeacherRepository.teachers)
+                    if (teacher.getTeacherId().equals(newCourse.getTeacher().getTeacherId()))
+                    {
+                        df.deleteLines(TeacherRepository.fileName, String.valueOf(teacher.getTeacherId()));
+                        newLine = teacher.customToString(new ArrayList<Course>(){});
+                        mw.writeToFile(TeacherRepository.fileName, newLine);
+                        break;
+                    }
+            }
+
+            //credits was changed
+            if (course.getCredits() != courses.get(index).getCredits()){
+                for (Student stud : courses.get(index).getStudentsEnrolled()) {
+                    stud.setTotalCredits(stud.getTotalCredits() - courses.get(index).getCredits());
+                    stud.setTotalCredits(stud.getTotalCredits() + newCourse.getCredits());
+                    df.deleteLines(StudentRepository.fileName, String.valueOf(stud.getStudentId()));
+                    newLine = stud.customToString(new ArrayList<Course>(){});
+                    mw.writeToFile(StudentRepository.fileName, newLine);
+                }
+            }
+
+            courses.remove(index);
+
+            System.out.println("UPDATE SUCCESSFUL!");
+            return null;
+        }
+
+        System.out.println("THE PROVIDED COURSE ID WAS NOT FOUND!");
         return course;
     }
 
