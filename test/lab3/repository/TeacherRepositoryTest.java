@@ -1,6 +1,7 @@
 package lab3.repository;
 
 import junit.framework.TestCase;
+import lab3.model.Course;
 import lab3.model.Teacher;
 
 import java.util.ArrayList;
@@ -32,11 +33,22 @@ public class TeacherRepositoryTest extends TestCase {
         List<Teacher> teacherList = teacherRepository.findAll();
         assertEquals(2, teacherList.size());
 
-        assertEquals(1L, (long) teacherList.get(0).getTeacherId());
-        assertEquals(2L, (long) teacherList.get(1).getTeacherId());
+        boolean IdOneFound = false;
+        boolean IdTwoFound = false;
+
+        for (Teacher teacher : teacherList) {
+            if (teacher.getTeacherId().equals(1L))
+                IdOneFound = true;
+            else if (teacher.getTeacherId().equals(2L))
+                IdTwoFound = true;
+        }
+
+        assertTrue(IdOneFound);
+        assertTrue(IdTwoFound);
     }
 
     public void testSave() {
+        StudentRepository studentRepository = new StudentRepository("test/lab3/repository/studentsTest.txt");
         CourseRepository courseRepository = new CourseRepository("test/lab3/repository/coursesTest.txt");
 
         Teacher teacher = new Teacher(25L,"Shawn","Mendes");
@@ -47,6 +59,7 @@ public class TeacherRepositoryTest extends TestCase {
     }
 
     public void testDelete() {
+        StudentRepository studentRepository = new StudentRepository("test/lab3/repository/studentsTest.txt");
         CourseRepository courseRepository = new CourseRepository("test/lab3/repository/coursesTest.txt");
         Teacher teacher = new Teacher(25L,"Shawn","Mendes");
 
@@ -55,16 +68,19 @@ public class TeacherRepositoryTest extends TestCase {
     }
 
     public void testUpdate() {
+        StudentRepository studentRepository = new StudentRepository("test/lab3/repository/studentsTest.txt");
         CourseRepository courseRepository = new CourseRepository("test/lab3/repository/coursesTest.txt");
         Teacher teacher = new Teacher(1L,"Tudor","Chifor");
+
+        System.out.println(CourseRepository.getCourses());
 
         Teacher resultTeacher =  teacherRepository.update(1L,teacher);
         assertNull(resultTeacher);
 
-//        teacher.setFirstName("Catalin");
-//        teacher.setLastName("Rusu");
-//
-//        Teacher resultTeacher1 =  teacherRepository.update(1L,teacher);
-//        assertNotNull(resultTeacher1);
+        teacher.setFirstName("Catalin");
+        teacher.setLastName("Rusu");
+
+        Teacher resultTeacher1 =  teacherRepository.update(1L,teacher);
+        assertNull(resultTeacher1);
     }
 }

@@ -155,7 +155,7 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
                 t.setLastName(teacher.getLastName());
 
                 List<Course> emptyCourseList = new ArrayList<Course>(){};
-
+                System.out.println(CourseRepository.getCourses());
                 String newLine = t.customToString(emptyCourseList);
                 ModelWriter mw = new ModelWriter();
                 mw.writeToFile(fileName, newLine);
