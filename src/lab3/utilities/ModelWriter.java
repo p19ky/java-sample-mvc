@@ -14,8 +14,8 @@ public class ModelWriter {
                     StandardOpenOption.APPEND);
 
             // append text to file
-            bw.newLine();
             bw.write(stringToWriteToFile);
+            bw.newLine();
 
             // close the writer
             bw.close();

@@ -3,7 +3,7 @@ package lab3.controller;
 import lab3.repository.TeacherRepository;
 
 public class TeacherController {
-    private final TeacherRepository teacherRepository  = new TeacherRepository("test/lab3/repository/teachersTest.txt");
+    private final TeacherRepository teacherRepository  = new TeacherRepository("teachers.txt");
 
     public TeacherController() {}
 
