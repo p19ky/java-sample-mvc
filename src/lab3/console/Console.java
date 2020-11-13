@@ -53,6 +53,9 @@ public class Console {
                 // Printing the read line
 
 
+                /**
+                 * register Student for Course.
+                 */
                 if (input.trim().equals("1")) {
 
                     List<Course> listOfCourses = registrationSystem.getAllCourses();
@@ -76,10 +79,12 @@ public class Console {
 
                     System.out.println("Enter Course id:\n");
 
+                    //get course id
                     String inCourseId = reader.readLine();
 
                     System.out.println("Enter Student id:\n");
 
+                    //get student id
                     String inStudentId = reader.readLine();
 
                     Course courseForCall = null;
@@ -111,15 +116,16 @@ public class Console {
 
                     registrationSystem.register(courseForCall, studentForCall);
 
+                    /**
+                     * Print Courses with free places.
+                     */
                 } else if (input.trim().equals("2")) {
 
                     List<Course> courses = registrationSystem.retrieveCoursesWithFreePlaces();
-                    System.out.println();
-                    System.out.println("Courses with free available places:\n");
-                    System.out.println();
-                    for (Course course : courses)
-                        System.out.println(course.toString());
 
+                    /**
+                     * Get Students enrolled in a given course.
+                     */
                 } else if (input.trim().equals("3")) {
 
                     List<Course> listOfCourses = registrationSystem.getAllCourses();
@@ -158,15 +164,27 @@ public class Console {
                     for (Student stud : registrationSystem.retrieveStudentsEnrolledForACourse(courseForCall))
                         System.out.println(stud.toString());
 
-                } else if (input.trim().equals("4")) {
+                }
+                /**
+                 * Print all courses.
+                 */
+                else if (input.trim().equals("4")) {
                     this.courseController.print();
                 }
+                /**
+                 * Print all students.
+                 */
                 else if (input.trim().equals("5")) {
                     this.studentController.print();
-                } else if (input.trim().equals("6")) {
+                }
+                /**
+                 * Print all teachers.
+                 */
+                else if (input.trim().equals("6")) {
                     this.teacherController.print();
                 }
 
+                /** REPRINT CONSOLE IF 0 WAS NOT THE INPUT */
                 printConsole();
                 input = reader.readLine();
             }

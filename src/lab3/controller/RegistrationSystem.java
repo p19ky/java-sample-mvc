@@ -113,6 +113,17 @@ public class RegistrationSystem {
             if (course.getStudentsEnrolled().size() < course.getMaxEnrollment())
                 freeCourses.add(course);
 
+        if (freeCourses.isEmpty()) {
+            System.out.println("NO COURSES WITH FREE PLACES!");
+            return freeCourses;
+        }
+
+        System.out.println();
+        System.out.println("Courses with free available places:\n");
+        System.out.println();
+        for (Course course : freeCourses)
+            System.out.println(course.toString());
+
         return freeCourses;
     };
 
