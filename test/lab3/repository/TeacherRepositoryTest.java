@@ -42,11 +42,29 @@ public class TeacherRepositoryTest extends TestCase {
         Teacher teacher = new Teacher(25L,"Shawn","Mendes");
         assertNull(teacherRepository.save(teacher));
         assertNotNull(teacherRepository.save(teacher));
+
+        assertEquals(3, TeacherRepository.getTeachers().size());
     }
 
     public void testDelete() {
+        CourseRepository courseRepository = new CourseRepository("test/lab3/repository/coursesTest.txt");
+        Teacher teacher = new Teacher(25L,"Shawn","Mendes");
+
+        assertEquals(teacherRepository.delete(25L).getTeacherId(), teacher.getTeacherId());
+        assertNull(teacherRepository.delete(25L));
     }
 
     public void testUpdate() {
+        CourseRepository courseRepository = new CourseRepository("test/lab3/repository/coursesTest.txt");
+        Teacher teacher = new Teacher(1L,"Tudor","Chifor");
+
+        Teacher resultTeacher =  teacherRepository.update(1L,teacher);
+        assertNull(resultTeacher);
+
+//        teacher.setFirstName("Catalin");
+//        teacher.setLastName("Rusu");
+//
+//        Teacher resultTeacher1 =  teacherRepository.update(1L,teacher);
+//        assertNotNull(resultTeacher1);
     }
 }
