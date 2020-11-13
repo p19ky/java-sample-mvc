@@ -1,0 +1,4 @@
+Krisztian Pinkovai, 1, 5, [11;]
+Teo Olteanu, 2, 11, [11;12]
+
+Horatiu Radutiu, 3, 11, [12;11;]

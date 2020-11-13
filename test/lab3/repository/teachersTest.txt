@@ -1,0 +1,3 @@
+Catalin Rusu, 1, [11;]
+Cristian Sacarea, 2, [12;]
+Shawn Mendes, 25, []
