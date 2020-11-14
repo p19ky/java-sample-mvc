@@ -29,7 +29,6 @@ public class TeacherRepositoryTest extends TestCase {
     }
 
     public void testFindAll() {
-
         List<Teacher> teacherList = teacherRepository.findAll();
         assertEquals(2, teacherList.size());
 

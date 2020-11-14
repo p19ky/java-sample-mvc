@@ -65,8 +65,13 @@ public class CourseRepository implements ICrudRepository<Course> {
                 List<Student> studentsEnrolled = new ArrayList<Student>();
                 String regx = "[]";
                 char[] ca = regx.toCharArray();
+
                 for (char c:ca) words[4] = words[4].replace("" + c, "");
                 String[] studentIds = words[4].split(";");
+
+                System.out.println(studentIds);
+
+                if (!studentIds[0].equals(""))
                 for (String studentId:studentIds)
                     for (Student student : StudentRepository.getStudents())
                         if (Long.parseLong(studentId) == student.getStudentId()) studentsEnrolled.add(student);
@@ -95,6 +100,7 @@ public class CourseRepository implements ICrudRepository<Course> {
     @Override
     public Course findOne(Long id)
     {
+        System.out.println(courses);
         return courses.stream().filter(course -> course.getCourseId().equals(id)).findFirst().orElse(null);
     }
 
@@ -113,15 +119,21 @@ public class CourseRepository implements ICrudRepository<Course> {
      */
     @Override
     public Course save(Course course) {
-        List<String> listOfLines = new ModelReader().getLinesFromFile(fileName);
+        //List<String> listOfLines = new ModelReader().getLinesFromFile(fileName);
 
-        for (String line : listOfLines) {
-            String[] words = line.split(", ");
+//        for (String line : listOfLines) {
+//            String[] words = line.split(", ");
+//
+//            System.out.println("COURSE ALREADY EXISTS!");
+//            for (Course c : courses) if (c.getCourseId() == Long.parseLong(words[1])) return c;
+//        }
 
-            System.out.println("COURSE ALREADY EXISTS!");
-            for (Course c : courses) if (c.getCourseId() == Long.parseLong(words[1])) return c;
-        }
-
+        for(Course course1: courses)
+            if(course1.getCourseId().equals(course.getCourseId()))
+            {
+                System.out.println("COURSE ALREADY EXISTS!");
+                return course1;
+            }
 
         String newLine = course.customToString();
         ModelWriter mw = new ModelWriter();

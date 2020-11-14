@@ -176,19 +176,20 @@ public class StudentRepository implements ICrudRepository<Student>{
                 ModelWriter mw = new ModelWriter();
                 mw.writeToFile(fileName, newLine);
 
-                for (Course course : CourseRepository.getCourses()) {
-                    List<Student> newStudArray = new ArrayList<Student>(){};
-                    for (Student st : course.getStudentsEnrolled()) {
-                        if (!(st.getStudentId().equals(stud.getStudentId()))) {
-                            newStudArray.add(st);
-                        }
-                    }
-                    course.setStudentsEnrolled(newStudArray);
-
-                    df.deleteLines(CourseRepository.fileName, String.valueOf(course.getCourseId()));
-                    newLine = course.customToString();
-                    mw.writeToFile(CourseRepository.fileName, newLine);
-                }
+                // update courses with this stundent's current updates
+//                for (Course course : CourseRepository.getCourses()) {
+//                    List<Student> newStudArray = new ArrayList<Student>(){};
+//                    for (Student st : course.getStudentsEnrolled()) {
+//                        if (!(st.getStudentId().equals(stud.getStudentId()))) {
+//                            newStudArray.add(st);
+//                        }
+//                    }
+//                    course.setStudentsEnrolled(newStudArray);
+//
+//                    df.deleteLines(CourseRepository.fileName, String.valueOf(course.getCourseId()));
+//                    newLine = course.customToString();
+//                    mw.writeToFile(CourseRepository.fileName, newLine);
+//                }
 
 
                 System.out.println("STUDENT UPDATED SUCCESSFULLY!");
