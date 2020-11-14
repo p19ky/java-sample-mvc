@@ -117,14 +117,6 @@ public class CourseRepository implements ICrudRepository<Course> {
      */
     @Override
     public Course save(Course course) {
-        //List<String> listOfLines = new ModelReader().getLinesFromFile(fileName);
-
-//        for (String line : listOfLines) {
-//            String[] words = line.split(", ");
-//
-//            System.out.println("COURSE ALREADY EXISTS!");
-//            for (Course c : courses) if (c.getCourseId() == Long.parseLong(words[1])) return c;
-//        }
 
         for(Course course1: courses)
             if(course1.getCourseId().equals(course.getCourseId()))
@@ -275,15 +267,6 @@ public class CourseRepository implements ICrudRepository<Course> {
                             newLine = teacher.customToString(oldCoursesWithoutRemovedOne);
                             mw.writeToFile(TeacherRepository.fileName, newLine);
                         }
-
-//                for (Teacher teacher : TeacherRepository.teachers)
-//                    if (teacher.getTeacherId().equals(newCourse.getTeacher().getTeacherId()))
-//                    {
-//                        df.deleteLines(TeacherRepository.fileName, String.valueOf(teacher.getTeacherId()));
-//                        newLine = teacher.customToString(new ArrayList<Course>(){});
-//                        mw.writeToFile(TeacherRepository.fileName, newLine);
-//                        break;
-//                    }
 
                 for (Teacher teacher : TeacherRepository.getTeachers())
                     if (teacher.getTeacherId().equals(removedCourse.getTeacher().getTeacherId())) {
