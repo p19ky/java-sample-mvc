@@ -42,7 +42,7 @@ public class Student extends Person {
                 for (Student student : course.getStudentsEnrolled())
                     if (student.getStudentId().equals(studentId)) myCourses.add(course);
         } else {
-            for (Course course : CourseRepository.getCourses())
+            for (Course course : listToSearchIn)
                 for (Student student : course.getStudentsEnrolled())
                     if (student.getStudentId().equals(studentId)) myCourses.add(course);
         }

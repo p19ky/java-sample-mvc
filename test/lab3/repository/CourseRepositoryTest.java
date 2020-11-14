@@ -70,5 +70,31 @@ public class CourseRepositoryTest extends TestCase {
     }
 
     public void testUpdate() {
+        Course newCourseDetalis =
+                new Course(
+                        "LogicaNou",
+                        12L,
+                        new Teacher(1L,
+                                "Catalin",
+                                "Rusu"),
+                        30,
+                        new ArrayList<Student>(),
+                        3);
+
+
+        Course resultCourse = courseRepository.update(12L, newCourseDetalis);
+        assertNull(resultCourse);
+
+        Course BackToOldCourse = new Course(
+                "Logica",
+                12L,
+                new Teacher(2L, "Cristian", "Sacarea"),
+                30,
+                new ArrayList<Student>(),
+                6);
+
+        Course resultCourse1 = courseRepository.update(12L, BackToOldCourse);
+        assertNull(resultCourse1);
+
     }
 }

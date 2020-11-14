@@ -69,12 +69,10 @@ public class CourseRepository implements ICrudRepository<Course> {
                 for (char c:ca) words[4] = words[4].replace("" + c, "");
                 String[] studentIds = words[4].split(";");
 
-                System.out.println(studentIds);
-
                 if (!studentIds[0].equals(""))
-                for (String studentId:studentIds)
-                    for (Student student : StudentRepository.getStudents())
-                        if (Long.parseLong(studentId) == student.getStudentId()) studentsEnrolled.add(student);
+                    for (String studentId:studentIds)
+                        for (Student student : StudentRepository.getStudents())
+                            if (Long.parseLong(studentId) == student.getStudentId()) studentsEnrolled.add(student);
 
                 //credits
                 int credits = Integer.parseInt(words[5]);
@@ -172,8 +170,7 @@ public class CourseRepository implements ICrudRepository<Course> {
         }
 
         if (index != -1) {
-            List<Course> oldCourses = new ArrayList<Course>(){};
-            Collections.copy(oldCourses, courses);
+            List<Course> oldCourses = new ArrayList<Course>(courses);
             oldCourses.remove(index);
 
             //delete the removed course from enrolledCourses of students and decrease students totalCredits.
@@ -250,16 +247,18 @@ public class CourseRepository implements ICrudRepository<Course> {
                 return course;
             }
 
-            List<Course> oldCoursesWithoutRemovedOne = new ArrayList<Course>(){};
-            Collections.copy(oldCoursesWithoutRemovedOne, courses);
+            List<Course> oldCoursesWithoutRemovedOne = new ArrayList<Course>(courses);
             oldCoursesWithoutRemovedOne.remove(index);
 
             DeleteSpecificFileLines df = new DeleteSpecificFileLines();
             df.deleteLines(fileName, String.valueOf(courses.get(index).getCourseId()));
 
             Course newCourse =
-                    new Course(course.getName(), course.getCourseId(), course.getTeacher(), course.getMaxEnrollment(), course.getStudentsEnrolled(), course.getCredits());
+                    new Course(course.getName(), course.getCourseId(), course.getTeacher(),
+                            course.getMaxEnrollment(), courses.get(index).getStudentsEnrolled(), course.getCredits());
+
             courses.add(newCourse);
+            oldCoursesWithoutRemovedOne.add(newCourse);
 
             String newLine = newCourse.customToString();
             ModelWriter mw = new ModelWriter();
@@ -268,33 +267,40 @@ public class CourseRepository implements ICrudRepository<Course> {
             /* --------------------------- */
 
             //teacher was changed.
-            if (!(course.getTeacher().getTeacherId().equals(newCourse.getTeacher().getTeacherId()))) {
+            if (!(removedCourse.getTeacher().getTeacherId().equals(newCourse.getTeacher().getTeacherId()))) {
                 for (Teacher teacher : TeacherRepository.teachers)
-                    for (Course c : teacher.getCourses(new ArrayList<Course>(){}))
-                        if (c.getCourseId().equals(courses.get(index).getCourseId())) {
+                    for (Course c : teacher.getCourses(oldCoursesWithoutRemovedOne))
+                        if (c.getCourseId().equals(removedCourse.getCourseId())) {
                             df.deleteLines(TeacherRepository.fileName, String.valueOf(teacher.getTeacherId()));
                             newLine = teacher.customToString(oldCoursesWithoutRemovedOne);
                             mw.writeToFile(TeacherRepository.fileName, newLine);
-                            break;
                         }
 
-                for (Teacher teacher : TeacherRepository.teachers)
-                    if (teacher.getTeacherId().equals(newCourse.getTeacher().getTeacherId()))
-                    {
+//                for (Teacher teacher : TeacherRepository.teachers)
+//                    if (teacher.getTeacherId().equals(newCourse.getTeacher().getTeacherId()))
+//                    {
+//                        df.deleteLines(TeacherRepository.fileName, String.valueOf(teacher.getTeacherId()));
+//                        newLine = teacher.customToString(new ArrayList<Course>(){});
+//                        mw.writeToFile(TeacherRepository.fileName, newLine);
+//                        break;
+//                    }
+
+                for (Teacher teacher : TeacherRepository.getTeachers())
+                    if (teacher.getTeacherId().equals(removedCourse.getTeacher().getTeacherId())) {
                         df.deleteLines(TeacherRepository.fileName, String.valueOf(teacher.getTeacherId()));
-                        newLine = teacher.customToString(new ArrayList<Course>(){});
+                        newLine = teacher.customToString(oldCoursesWithoutRemovedOne);
                         mw.writeToFile(TeacherRepository.fileName, newLine);
                         break;
                     }
             }
 
             //credits was changed
-            if (course.getCredits() != courses.get(index).getCredits()){
-                for (Student stud : courses.get(index).getStudentsEnrolled()) {
-                    stud.setTotalCredits(stud.getTotalCredits() - courses.get(index).getCredits());
+            if (course.getCredits() != removedCourse.getCredits()){
+                for (Student stud : removedCourse.getStudentsEnrolled()) {
+                    stud.setTotalCredits(stud.getTotalCredits() - removedCourse.getCredits());
                     stud.setTotalCredits(stud.getTotalCredits() + newCourse.getCredits());
                     df.deleteLines(StudentRepository.fileName, String.valueOf(stud.getStudentId()));
-                    newLine = stud.customToString(new ArrayList<Course>(){});
+                    newLine = stud.customToString(oldCoursesWithoutRemovedOne);
                     mw.writeToFile(StudentRepository.fileName, newLine);
                 }
             }
