@@ -1,2 +1,2 @@
-Catalin Rusu, 1, [11;12;]
-Cristian Sacarea, 2, []
+Cristian Sacarea, 2, [12;]
+Catalin Rusu, 1, [11;]
