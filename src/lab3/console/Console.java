@@ -35,6 +35,9 @@ public class Console {
         System.out.println("  7 - Student Menu.");
         System.out.println("  8 - Teacher Menu.");
         System.out.println("  9 - Course Menu.");
+        System.out.println("  10 - Student Sort Menu.");
+        System.out.println("  11 - Teacher Sort Menu.");
+        System.out.println("  12 - Course Sort Menu.");
         System.out.println();
         System.out.println("  0 - Exit.");
         System.out.println();
@@ -89,6 +92,59 @@ public class Console {
         System.out.println("  3 - Add new Course.");
         System.out.println("  4 - Delete a Course.");
         System.out.println("  5 - Update an existing Course.");
+        System.out.println();
+        System.out.println("  0 - Exit.");
+        System.out.println();
+        System.out.println();
+        System.out.println("<><><><><><><><><><><><><><><><><><><><><><><><><><>");
+    }
+
+    public void printStudentSortMenu() {
+        System.out.println();
+        System.out.println();
+        System.out.println("           *** UBB STUDENT SORT MENU ***");
+        System.out.println();
+        System.out.println();
+        System.out.println("  1 - Sort on studentId.");
+        System.out.println("  2 - Sort on firstName.");
+        System.out.println("  3 - Sort on lastName.");
+        System.out.println("  4 - Sort on totalCredits.");
+        System.out.println("  5 - Sort on number of enrolledCourses.");
+        System.out.println();
+        System.out.println("  0 - Exit.");
+        System.out.println();
+        System.out.println();
+        System.out.println("<><><><><><><><><><><><><><><><><><><><><><><><><><>");
+    }
+
+    public void printTeacherSortMenu() {
+        System.out.println();
+        System.out.println();
+        System.out.println("           *** UBB TEACHER SORT MENU ***");
+        System.out.println();
+        System.out.println();
+        System.out.println("  1 - Sort on teacherId.");
+        System.out.println("  2 - Sort on firstName.");
+        System.out.println("  3 - Sort on lastName.");
+        System.out.println("  4 - Sort on number of courses.");
+        System.out.println();
+        System.out.println("  0 - Exit.");
+        System.out.println();
+        System.out.println();
+        System.out.println("<><><><><><><><><><><><><><><><><><><><><><><><><><>");
+    }
+
+    public void printCourseSortMenu() {
+        System.out.println();
+        System.out.println();
+        System.out.println("           *** UBB COURSE SORT MENU ***");
+        System.out.println();
+        System.out.println();
+        System.out.println("  1 - Sort on courseId.");
+        System.out.println("  2 - Sort on name.");
+        System.out.println("  3 - Sort on maxEnrollment.");
+        System.out.println("  4 - Sort on credits.");
+        System.out.println("  5 - Sort on number of studentsEnrolled.");
         System.out.println();
         System.out.println("  0 - Exit.");
         System.out.println();
@@ -229,7 +285,7 @@ public class Console {
 
                     System.out.println("\nSTUDENTS ENROLLED IN GIVEN COURSE:\n\n");
                     for (Student stud : registrationSystem.retrieveStudentsEnrolledForACourse(courseForCall))
-                        System.out.println(stud.toString());
+                        StudentRepository.printStudent(stud);
 
                 }
                 /**
@@ -277,6 +333,18 @@ public class Console {
                         else if (studentMenuInput.trim().equals("3")) {
                             studentController.saveStudent();
                         }
+                        /**
+                         * delete an existing student
+                         */
+                        else if (studentMenuInput.trim().equals("4")) {
+                            studentController.deleteStudent();
+                        }
+                        /**
+                         * update an existing student
+                         */
+                        else if (studentMenuInput.trim().equals("5")) {
+                            studentController.updateStudent();
+                        }
 
                         printStudentMenu();
                         studentMenuInput = reader.readLine();
@@ -291,7 +359,39 @@ public class Console {
                     String teacherMenuInput = reader.readLine();
 
                     while (!teacherMenuInput.equals("0")) {
+                        /**
+                         * find one teacher
+                         */
+                        if (teacherMenuInput.trim().equals("1")) {
+//                            studentController.findOneStudent();
+                        }
+                        /**
+                         * find all teachers
+                         */
+                        else if (teacherMenuInput.trim().equals("2")) {
+//                            studentController.findAllStudents();
+                        }
+                        /**
+                         * save a new teacher to database
+                         */
+                        else if (teacherMenuInput.trim().equals("3")) {
+//                            studentController.saveStudent();
+                        }
+                        /**
+                         * delete an existing teacher
+                         */
+                        else if (teacherMenuInput.trim().equals("4")) {
+//                            studentController.deleteStudent();
+                        }
+                        /**
+                         * update an existing teacher
+                         */
+                        else if (teacherMenuInput.trim().equals("5")) {
+//                            studentController.updateStudent();
+                        }
 
+                        printTeacherMenu();
+                        teacherMenuInput = reader.readLine();
                     }
                 }
                 /**
@@ -303,7 +403,115 @@ public class Console {
                     String courseMenuInput = reader.readLine();
 
                     while (!courseMenuInput.equals("0")) {
+                        /**
+                         * find one course
+                         */
+                        if (courseMenuInput.trim().equals("1")) {
+//                            studentController.findOneStudent();
+                        }
+                        /**
+                         * find all courses
+                         */
+                        else if (courseMenuInput.trim().equals("2")) {
+//                            studentController.findAllStudents();
+                        }
+                        /**
+                         * save a new course to database
+                         */
+                        else if (courseMenuInput.trim().equals("3")) {
+//                            studentController.saveStudent();
+                        }
+                        /**
+                         * delete an existing course
+                         */
+                        else if (courseMenuInput.trim().equals("4")) {
+//                            studentController.deleteStudent();
+                        }
+                        /**
+                         * update an existing course
+                         */
+                        else if (courseMenuInput.trim().equals("5")) {
+//                            studentController.updateStudent();
+                        }
 
+                        printCourseMenu();
+                        courseMenuInput = reader.readLine();
+                    }
+                }
+                /**
+                 * sort students on given criteria
+                 */
+                else if (input.trim().equals("10")) {
+                    printStudentSortMenu();
+
+                    String studentSortMenuInput = reader.readLine();
+
+                    while (!studentSortMenuInput.equals("0")) {
+
+                        if (studentSortMenuInput.trim().equals("1")){
+                            studentController.sortStudentsOnId();
+                        } else if (studentSortMenuInput.trim().equals("2")) {
+                            studentController.sortStudentsOnFirstName();
+                        } else if (studentSortMenuInput.trim().equals("3")) {
+                            studentController.sortStudentsOnLastName();
+                        } else if (studentSortMenuInput.trim().equals("4")) {
+                            studentController.sortStudentsOnTotalCredits();
+                        } else if (studentSortMenuInput.trim().equals("5")) {
+                            studentController.sortStudentsOnNumberOfEnrolledCourses();
+                        }
+
+                        printStudentSortMenu();
+                        studentSortMenuInput = reader.readLine();
+                    }
+                }
+                /**
+                 * sort teachers on given criteria
+                 */
+                else if (input.trim().equals("11")) {
+                    printTeacherSortMenu();
+
+                    String teacherSortMenuInput = reader.readLine();
+
+                    while (!teacherSortMenuInput.equals("0")) {
+
+                        if (teacherSortMenuInput.trim().equals("1")){
+                            teacherController.sortTeachersOnId();
+                        } else if (teacherSortMenuInput.trim().equals("2")) {
+                            teacherController.sortTeachersOnFirstName();
+                        } else if (teacherSortMenuInput.trim().equals("3")) {
+                            teacherController.sortTeachersOnLastName();
+                        } else if (teacherSortMenuInput.trim().equals("4")) {
+                            teacherController.sortTeachersOnNumberOfCourses();
+                        }
+
+                        printTeacherSortMenu();
+                        teacherSortMenuInput = reader.readLine();
+                    }
+                }
+                /**
+                 * sort courses on given criteria
+                 */
+                else if (input.trim().equals("12")) {
+                    printCourseSortMenu();
+
+                    String courseSortMenuInput = reader.readLine();
+
+                    while (!courseSortMenuInput.equals("0")) {
+
+                        if (courseSortMenuInput.trim().equals("1")){
+                            courseController.sortCoursesOnCourseId();
+                        } else if (courseSortMenuInput.trim().equals("2")) {
+                            courseController.sortCoursesOnName();
+                        } else if (courseSortMenuInput.trim().equals("3")) {
+                            courseController.sortCoursesOnMaxEnrollment();
+                        } else if (courseSortMenuInput.trim().equals("4")) {
+                            courseController.sortCoursesOnCredits();
+                        } else if (courseSortMenuInput.trim().equals("5")) {
+                            courseController.sortTeachersOnNumberOfCourses();
+                        }
+
+                        printCourseSortMenu();
+                        courseSortMenuInput = reader.readLine();
                     }
                 }
 

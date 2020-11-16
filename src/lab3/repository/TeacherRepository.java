@@ -179,7 +179,31 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
                 str.append(";");
             }
             str.append("]");
+            str.append(" firstName: ");
+            str.append(teacher.getFirstName());
+            str.append(" lastName: ");
+            str.append(teacher.getLastName());
             System.out.println(str.toString());
         }
+    }
+
+
+    /**
+     * PRINT TEACHER TO CONSOLE.
+     */
+    public static void printTeacher(Teacher teacher) {
+            StringBuilder str = new StringBuilder();
+            str.append(teacher.toString());
+            str.append(" courses: [");
+            for (Course course : teacher.getCourses(new ArrayList<Course>(){})) {
+                str.append(course.getName());
+                str.append(";");
+            }
+            str.append("]");
+            str.append(" firstName: ");
+            str.append(teacher.getFirstName());
+            str.append(" lastName: ");
+            str.append(teacher.getLastName());
+            System.out.println(str.toString());
     }
 }

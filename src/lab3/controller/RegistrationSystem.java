@@ -126,8 +126,10 @@ public class RegistrationSystem {
         System.out.println();
         System.out.println("Courses with free available places:\n");
         System.out.println();
-        for (Course course : freeCourses)
-            System.out.println(course.toString());
+        for (Course course : freeCourses) {
+            System.out.println("free places: " + (course.getMaxEnrollment() - course.getStudentsEnrolled().size())  + " " + course.toString());
+
+        }
 
         return freeCourses;
     };

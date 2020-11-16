@@ -140,11 +140,11 @@ public class StudentRepository implements ICrudRepository<Student>{
         {
             DeleteSpecificFileLines df = new DeleteSpecificFileLines();
             df.deleteLines(fileName, String.valueOf(studentToReturn.getStudentId()));
-            System.out.println("STUDENT DELETED SUCCESSFULLY!");
+//            System.out.println("STUDENT DELETED SUCCESSFULLY!");
             return studentToReturn;
         }
 
-        System.out.println("STUDENT WITH GIVEN ID DOES NOT EXIST!");
+//        System.out.println("STUDENT WITH GIVEN ID DOES NOT EXIST!");
         return null;
     }
 
@@ -176,23 +176,6 @@ public class StudentRepository implements ICrudRepository<Student>{
                 ModelWriter mw = new ModelWriter();
                 mw.writeToFile(fileName, newLine);
 
-                // update courses with this stundent's current updates
-//                for (Course course : CourseRepository.getCourses()) {
-//                    List<Student> newStudArray = new ArrayList<Student>(){};
-//                    for (Student st : course.getStudentsEnrolled()) {
-//                        if (!(st.getStudentId().equals(stud.getStudentId()))) {
-//                            newStudArray.add(st);
-//                        }
-//                    }
-//                    course.setStudentsEnrolled(newStudArray);
-//
-//                    df.deleteLines(CourseRepository.fileName, String.valueOf(course.getCourseId()));
-//                    newLine = course.customToString();
-//                    mw.writeToFile(CourseRepository.fileName, newLine);
-//                }
-
-
-                System.out.println("STUDENT UPDATED SUCCESSFULLY!");
                 return null;
             }
 
@@ -213,7 +196,35 @@ public class StudentRepository implements ICrudRepository<Student>{
                 str.append(";");
             }
             str.append("]");
+            str.append(" firstName: ");
+            str.append(student.getFirstName());
+            str.append(" lastName: ");
+            str.append(student.getLastName());
             System.out.println(str.toString());
+        }
+    }
+
+    /**
+     * PRINT STUDENT TO CONSOLE.
+     */
+    public static void printStudent(Student student) {
+
+        if (student != null) {
+            StringBuilder str = new StringBuilder();
+            str.append(student.toString());
+            str.append(" enrolledCourses: [");
+            for (Course course : student.getEnrolledCourses(new ArrayList<Course>(){})) {
+                str.append(course.getName());
+                str.append(";");
+            }
+            str.append("]");
+            str.append(" firstName: ");
+            str.append(student.getFirstName());
+            str.append(" lastName: ");
+            str.append(student.getLastName());
+            System.out.println(str.toString());
+        } else {
+            System.out.println("STUDENT DOES NOT EXIST!");
         }
     }
 }
