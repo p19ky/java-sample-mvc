@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RegistrationSystem {
+
+    public void callRegister() {
+
+    }
+
     /**
      *
      * @param course whom the student should be enrolled to.
