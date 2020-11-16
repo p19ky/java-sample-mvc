@@ -10,4 +10,9 @@ public class StudentController {
     public void print() {
         this.studentRepository.printStudents();
     }
+
+    /**
+     * Save Student if not already in database.
+     */
+    public void saveStudent() {}
 }
