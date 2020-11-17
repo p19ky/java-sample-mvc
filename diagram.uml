@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="181.11111111111114" y="415.0">lab3.controller.StudentController</node>
+    <node x="181.11111111111114" y="565.0">lab3.StartApp</node>
+    <node x="181.11111111111114" y="490.0">lab3.controller.CourseController</node>
+    <node x="454.11111111111114" y="185.0">lab3.exceptions.InvalidStudentException</node>
+    <node x="487.11111111111114" y="565.0">lab3.model.Course</node>
+    <node x="390.6666666666667" y="27.77777777777777">lab3.repository.CourseRepository</node>
+    <node x="402.11111111111114" y="490.0">lab3.utilities.ModelWriter</node>
+    <node x="305.11111111111114" y="265.0">lab3.model.Person</node>
+    <node x="377.11111111111114" y="110.0">lab3.repository.TeacherRepository</node>
+    <node x="181.11111111111114" y="340.0">lab3.utilities.DeleteSpecificFileLines</node>
+    <node x="583.1111111111111" y="490.0">lab3.utilities.ModelReader</node>
+    <node x="581.1111111111111" y="110.0">lab3.repository.StudentRepository</node>
+    <node x="181.11111111111114" y="265.0">lab3.model.Student</node>
+    <node x="458.11111111111114" y="340.0">lab3.controller.RegistrationSystem</node>
+    <node x="181.11111111111114" y="110.0">lab3.repository.ICrudRepository</node>
+    <node x="247.11111111111114" y="185.0">lab3.model.Teacher</node>
+    <node x="338.11111111111114" y="565.0">lab3.console.Console</node>
+    <node x="410.11111111111114" y="415.0">lab3.controller.TeacherController</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="lab3.model.Teacher" target="lab3.model.Person">
+      <point x="0.0" y="-15.0" />
+      <point x="357.11111111111114" y="240.0" />
+      <point x="319.11111111111114" y="240.0" />
+      <point x="24.0" y="15.0" />
+    </edge>
+    <edge source="lab3.model.Student" target="lab3.model.Person">
+      <point x="0.0" y="-15.0" />
+      <point x="233.11111111111114" y="240.0" />
+      <point x="271.11111111111114" y="240.0" />
+      <point x="-24.0" y="15.0" />
+    </edge>
+    <edge source="lab3.repository.StudentRepository" target="lab3.repository.ICrudRepository">
+      <point x="0.0" y="-15.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="lab3.repository.CourseRepository" target="lab3.repository.ICrudRepository">
+      <point x="0.0" y="-15.0" />
+      <point x="88.0" y="55.0" />
+      <point x="232.0" y="55.0" />
+      <point x="-56.0" y="15.0" />
+    </edge>
+    <edge source="lab3.repository.TeacherRepository" target="lab3.repository.ICrudRepository">
+      <point x="0.0" y="-15.0" />
+      <point x="673.1111111111111" y="85.0" />
+      <point x="525.1111111111111" y="85.0" />
+      <point x="56.0" y="15.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.9" x="627.0" y="461.0" />
+  <SelectedNodes>
+    <node>lab3.repository.CourseRepository</node>
+  </SelectedNodes>
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

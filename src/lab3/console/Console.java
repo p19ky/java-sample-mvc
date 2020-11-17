@@ -38,6 +38,7 @@ public class Console {
         System.out.println("  10 - Student Sort Menu.");
         System.out.println("  11 - Teacher Sort Menu.");
         System.out.println("  12 - Course Sort Menu.");
+        System.out.println("  13 - Filter Students on total Credits.");
         System.out.println();
         System.out.println("  0 - Exit.");
         System.out.println();
@@ -152,6 +153,22 @@ public class Console {
         System.out.println("<><><><><><><><><><><><><><><><><><><><><><><><><><>");
     }
 
+    public void printStudentFilterMenu() {
+        System.out.println();
+        System.out.println();
+        System.out.println("           *** UBB STUDENT FILTER MENU ***");
+        System.out.println();
+        System.out.println();
+        System.out.println("  1 - Filter on (less than given total credits).");
+        System.out.println("  2 - Filter on (more than given total credits).");
+        System.out.println("  3 - Filter on (equal to given total credits).");
+        System.out.println();
+        System.out.println("  0 - Exit.");
+        System.out.println();
+        System.out.println();
+        System.out.println("<><><><><><><><><><><><><><><><><><><><><><><><><><>");
+    }
+
     public Console() throws IOException {
         try {
             this.printConsole();
@@ -251,42 +268,48 @@ public class Console {
                      */
                 } else if (input.trim().equals("3")) {
 
-                    List<Course> listOfCourses = registrationSystem.getAllCourses();
+                    studentsEnrolledGivenCourse: {
+                        List<Course> listOfCourses = registrationSystem.getAllCourses();
 
-                    if (listOfCourses.isEmpty()) {
-                        System.out.println("NO COURSES AVAILABLE AT THE MOMENT!");
-                        break;
-                    }
-
-                    System.out.println();
-                    System.out.println("\nCourses:\n");
-                    System.out.println();
-                    for (Course c : listOfCourses)
-                        System.out.println(c.toString());
-                    System.out.println();
-
-                    System.out.println("Enter Course id:\n");
-
-                    String inCourseId = reader.readLine();
-
-                    Course courseForCall = null;
-
-                    for (Course c : CourseRepository.getCourses()) {
-                        if (c.getCourseId().equals(Long.parseLong(inCourseId.trim()))) {
-                            courseForCall = c;
+                        if (listOfCourses.isEmpty()) {
+                            System.out.println("NO COURSES AVAILABLE AT THE MOMENT!");
                             break;
                         }
+
+                        System.out.println();
+                        System.out.println("\nCourses:\n");
+                        System.out.println();
+                        for (Course c : listOfCourses)
+                            System.out.println(c.toString());
+                        System.out.println();
+
+                        System.out.println("YOU CAN GO BACK BY ENTERING -1");
+
+                        System.out.println("Enter Course id:\n");
+
+                        String inCourseId = reader.readLine();
+
+                        if (inCourseId.trim().equals("-1"))
+                            break studentsEnrolledGivenCourse;
+
+                        Course courseForCall = null;
+
+                        for (Course c : CourseRepository.getCourses()) {
+                            if (c.getCourseId().equals(Long.parseLong(inCourseId.trim()))) {
+                                courseForCall = c;
+                                break;
+                            }
+                        }
+
+                        if (courseForCall == null) {
+                            System.out.println("COURSE ID IS NOT AVAILABLE");
+                            continue;
+                        }
+
+                        System.out.println("\nSTUDENTS ENROLLED IN GIVEN COURSE:\n\n");
+                        for (Student stud : registrationSystem.retrieveStudentsEnrolledForACourse(courseForCall))
+                            StudentRepository.printStudent(stud);
                     }
-
-                    if (courseForCall == null) {
-                        System.out.println("COURSE ID IS NOT AVAILABLE");
-                        continue;
-                    }
-
-                    System.out.println("\nSTUDENTS ENROLLED IN GIVEN COURSE:\n\n");
-                    for (Student stud : registrationSystem.retrieveStudentsEnrolledForACourse(courseForCall))
-                        StudentRepository.printStudent(stud);
-
                 }
                 /**
                  * Print all courses.
@@ -363,31 +386,31 @@ public class Console {
                          * find one teacher
                          */
                         if (teacherMenuInput.trim().equals("1")) {
-//                            studentController.findOneStudent();
+                            teacherController.findOneTeacher();
                         }
                         /**
                          * find all teachers
                          */
                         else if (teacherMenuInput.trim().equals("2")) {
-//                            studentController.findAllStudents();
+                            teacherController.findAllTeachers();
                         }
                         /**
                          * save a new teacher to database
                          */
                         else if (teacherMenuInput.trim().equals("3")) {
-//                            studentController.saveStudent();
+                            teacherController.saveTeacher();
                         }
                         /**
                          * delete an existing teacher
                          */
                         else if (teacherMenuInput.trim().equals("4")) {
-//                            studentController.deleteStudent();
+                            teacherController.deleteTeacher();
                         }
                         /**
                          * update an existing teacher
                          */
                         else if (teacherMenuInput.trim().equals("5")) {
-//                            studentController.updateStudent();
+                            teacherController.updateTeacher();
                         }
 
                         printTeacherMenu();
@@ -512,6 +535,65 @@ public class Console {
 
                         printCourseSortMenu();
                         courseSortMenuInput = reader.readLine();
+                    }
+                }
+                /**
+                 * filter students on total credits
+                 */
+                else if (input.trim().equals("13")) {
+                    printStudentFilterMenu();
+
+                    String studentFilterMenuInput = reader.readLine();
+
+                    while (!studentFilterMenuInput.equals("0")) {
+
+                        if (studentFilterMenuInput.trim().equals("1")){
+
+                            System.out.println("YOU CAN EXIT AT ANY TIME BY HITTING SIMPLY ENTER");
+
+                            filterLessThan: {
+                                System.out.println("\nVALUE TO FILTER AFTER:\n");
+
+                                String inputValue = reader.readLine();
+
+                                if (inputValue.trim().equals(""))
+                                    break filterLessThan;
+
+                                studentController.filterStudentsOnTotalCredits(Integer.parseInt(inputValue.trim()), "lt");
+                            }
+                        } else if (studentFilterMenuInput.trim().equals("2")) {
+
+                            System.out.println("YOU CAN EXIT AT ANY TIME BY HITTING SIMPLY ENTER");
+
+                            filterGreaterThan: {
+                                System.out.println("\nVALUE TO FILTER AFTER:\n");
+
+                                String inputValue = reader.readLine();
+
+                                if (inputValue.trim().equals(""))
+                                    break filterGreaterThan;
+
+                                studentController.filterStudentsOnTotalCredits(Integer.parseInt(inputValue.trim()), "gt");
+                            }
+
+                        } else if (studentFilterMenuInput.trim().equals("3")) {
+
+                            System.out.println("YOU CAN EXIT AT ANY TIME BY HITTING SIMPLY ENTER");
+
+                            filterEqualTo: {
+                                System.out.println("\nVALUE TO FILTER AFTER:\n");
+
+                                String inputValue = reader.readLine();
+
+                                if (inputValue.trim().equals(""))
+                                    break filterEqualTo;
+
+                                studentController.filterStudentsOnTotalCredits(Integer.parseInt(inputValue.trim()), "eq");
+                            }
+                        }
+
+                        printStudentFilterMenu();
+                        studentFilterMenuInput = reader.readLine();
                     }
                 }
 

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InvalidClassException;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class StudentController {
     private final StudentRepository studentRepository = new StudentRepository("students.txt");
@@ -31,28 +33,33 @@ public class StudentController {
      */
     public void findOneStudent() throws IOException {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        findOneStudent: {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        try {
-            System.out.println();
-            System.out.println("ENTER ID TO SEARCH FOR: ");
-            System.out.println();
+            try {
+                System.out.println("\nYOU CAN GO BACK BY ENTERING -1\n\n");
 
-            // Reading data using readLine
-            String input = reader.readLine();
+                System.out.println("ENTER ID TO SEARCH FOR:\n");
 
-            if (!isNumeric(input.trim()))
-                throw new InvalidStudentException("Invalid Student id. Id must be numeric!");
+                // Reading data using readLine
+                String input = reader.readLine();
 
-            if (input.length() < 1)
-                throw new InvalidStudentException("Student id is required!");
+                if (input.trim().equals("-1"))
+                    break findOneStudent;
 
-            Student student = studentRepository.findOne(Long.parseLong(input.trim()));
+                if (!isNumeric(input.trim()))
+                    throw new InvalidStudentException("Invalid Student id. Id must be numeric!");
 
-            studentRepository.printStudent(student);
+                if (input.length() < 1)
+                    throw new InvalidStudentException("Student id is required!");
 
-        } catch (IOException | InvalidStudentException ex) {
-            ex.printStackTrace();
+                Student student = studentRepository.findOne(Long.parseLong(input.trim()));
+
+                StudentRepository.printStudent(student);
+
+            } catch (IOException | InvalidStudentException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -131,7 +138,7 @@ public class StudentController {
 
                 System.out.println("\nSTUDENTS AVAILABLE:\n\n");
                 for (Student student : StudentRepository.getStudents()) {
-                    System.out.println(student.toString());
+                    StudentRepository.printStudent(student);
                 }
 
                 System.out.println("\n\nYOU CAN EXIT AT ANYTIME BY ENTERING -1\n\n");
@@ -157,7 +164,6 @@ public class StudentController {
                 ex.printStackTrace();
             }
         }
-
     }
 
     /**
@@ -173,7 +179,7 @@ public class StudentController {
 
                 System.out.println("\nSTUDENTS AVAILABLE:\n\n");
                 for (Student student : StudentRepository.getStudents()) {
-                    System.out.println(student.toString());
+                    StudentRepository.printStudent(student);
                 }
 
                 System.out.println("\n\nYOU CAN EXIT AT ANYTIME BY ENTERING -1\n\n");
@@ -221,7 +227,6 @@ public class StudentController {
                 ex.printStackTrace();
             }
         }
-
     }
 
     /**
@@ -272,5 +277,32 @@ public class StudentController {
         for (Student student : StudentRepository.getStudents()) {
             studentRepository.printStudent(student);
         }
+    }
+
+    /**
+     *
+     * @param TypeOfFilter if "lt" return students with total credits less than given value.
+     *                     if "gt" return students with total credits greater than given value.
+     *                     if "eq" return students with total credits equal to given value.
+     * @param totalCredits total credits to filter after.
+     * return filtered list of students based on total credits.
+     */
+    public void filterStudentsOnTotalCredits(int totalCredits, String TypeOfFilter) {
+        var students = StudentRepository.getStudents();
+
+        Predicate<Student> byTotalCredits = null;
+
+        if (TypeOfFilter.equals("lt"))
+            byTotalCredits = student -> student.getTotalCredits() < totalCredits;
+        else if (TypeOfFilter.equals("gt"))
+            byTotalCredits = student -> student.getTotalCredits() > totalCredits;
+        else
+            byTotalCredits = student -> student.getTotalCredits() == totalCredits;
+
+        var result = students.stream().filter(byTotalCredits)
+                .collect(Collectors.toList());
+
+        for (Student student : result)
+            StudentRepository.printStudent(student);
     }
 }

@@ -110,7 +110,7 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
 
     /**
      *
-     * @param id id must be not null
+     * @param id must not be null
      * @return the removed student or null if there is no student with the given id
      */
     @Override
