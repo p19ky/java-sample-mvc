@@ -301,7 +301,7 @@ public class CourseRepository implements ICrudRepository<Course> {
     /**
      * PRINT COURSES TO CONSOLE.
      */
-    public void printCourses() {
+    public static void printCourses() {
         for (Course course : courses)
             System.out.println(course);
     }

@@ -186,7 +186,7 @@ public class StudentRepository implements ICrudRepository<Student>{
     /**
      * PRINT STUDENTS TO CONSOLE.
      */
-    public void printStudents() {
+    public static void printStudents() {
         for (Student student : students) {
             StringBuilder str = new StringBuilder();
             str.append(student.toString());

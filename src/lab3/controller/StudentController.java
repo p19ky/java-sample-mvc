@@ -25,208 +25,42 @@ public class StudentController {
      * Print all students.
      */
     public void print() {
-        this.studentRepository.printStudents();
+        StudentRepository.printStudents();
     }
 
     /**
      * Find a single Student based on id.
      */
-    public void findOneStudent() throws IOException {
-
-        findOneStudent: {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-            try {
-                System.out.println("\nYOU CAN GO BACK BY ENTERING -1\n\n");
-
-                System.out.println("ENTER ID TO SEARCH FOR:\n");
-
-                // Reading data using readLine
-                String input = reader.readLine();
-
-                if (input.trim().equals("-1"))
-                    break findOneStudent;
-
-                if (!isNumeric(input.trim()))
-                    throw new InvalidStudentException("Invalid Student id. Id must be numeric!");
-
-                if (input.length() < 1)
-                    throw new InvalidStudentException("Student id is required!");
-
-                Student student = studentRepository.findOne(Long.parseLong(input.trim()));
-
-                StudentRepository.printStudent(student);
-
-            } catch (IOException | InvalidStudentException ex) {
-                ex.printStackTrace();
-            }
-        }
+    public Student findOneStudent(Long id) throws IOException {
+        return studentRepository.findOne(id);
     }
 
     /**
      * Find all available students.
      */
-    public void findAllStudents() {
-        studentRepository.printStudents();
+    public List<Student> findAllStudents() {
+        return studentRepository.findAll();
     }
 
     /**
      * Save Student if not already in database.
      */
-    public void saveStudent() throws IOException{
-        saveStudent : {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-            try {
-
-                System.out.println("\nENTER NEW STUDENT DETAILS:\n\n");
-
-                System.out.println("YOU CAN EXIT ANYTIME BY ENTERING -1\n");
-
-                System.out.println("\nFIRST NAME:\n");
-                String firstNameInput = reader.readLine();
-
-                if (firstNameInput.trim().equals("-1"))
-                    break saveStudent;
-
-                if (firstNameInput.trim().equals(""))
-                    throw new InvalidStudentException("Firstname is required!");
-
-                System.out.println("\nLAST NAME:\n\n");
-                String lastNameInput = reader.readLine();
-
-                if (lastNameInput.trim().equals("-1"))
-                    break saveStudent;
-
-                if (lastNameInput.trim().equals(""))
-                    throw new InvalidStudentException("Lastname is required!");
-
-                System.out.println("\nSTUDENT ID:\n\n");
-                String studentId = reader.readLine();
-
-                if (studentId.trim().equals("-1"))
-                    break saveStudent;
-
-                if (studentId.trim().equals(""))
-                    throw new InvalidStudentException("Student id is required!");
-
-                if (!isNumeric(studentId))
-                    throw new InvalidStudentException("Student id should only contain numbers!");
-
-                Student stud = studentRepository.save(new Student(Long.parseLong(studentId.trim()), 0, firstNameInput.trim(), lastNameInput.trim()));
-
-                if (stud != null)
-                    System.out.println("STUDENT ALREADY EXISTS!");
-                else
-                    System.out.println("STUDENT SUCCESSFULLY SAVED!");
-
-            } catch (IOException | InvalidStudentException ex) {
-                ex.printStackTrace();
-            }
-        }
+    public Student saveStudent(Student student){
+        return studentRepository.save(student);
     }
 
     /**
      * Delete Student if it exists.
      */
-    public void deleteStudent() throws IOException {
-        deleteStudent: {
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-            try {
-
-                System.out.println("\nSTUDENTS AVAILABLE:\n\n");
-                for (Student student : StudentRepository.getStudents()) {
-                    StudentRepository.printStudent(student);
-                }
-
-                System.out.println("\n\nYOU CAN EXIT AT ANYTIME BY ENTERING -1\n\n");
-
-                System.out.println("\nENTER STUDENT ID:\n");
-
-                String input = reader.readLine();
-
-                if (input.trim().equals("-1"))
-                    break deleteStudent;
-
-                if (input.trim().equals(""))
-                    throw new InvalidStudentException("Student id is required!");
-
-                Student result_student = studentRepository.delete(Long.parseLong(input.trim()));
-
-                if (result_student == null)
-                    System.out.println("STUDENT GIVEN DOES NOT EXIST!");
-                else
-                    System.out.println("STUDENT DELETED SUCCESSFULLY!");
-
-            } catch (IOException | InvalidStudentException ex) {
-                ex.printStackTrace();
-            }
-        }
+    public Student deleteStudent(Long id) {
+        return studentRepository.delete(id);
     }
 
     /**
      * Update Student if it exists.
      */
-    public void updateStudent() {
-
-        updateStudent: {
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-            try {
-
-                System.out.println("\nSTUDENTS AVAILABLE:\n\n");
-                for (Student student : StudentRepository.getStudents()) {
-                    StudentRepository.printStudent(student);
-                }
-
-                System.out.println("\n\nYOU CAN EXIT AT ANYTIME BY ENTERING -1\n\n");
-
-                System.out.println("\nENTER STUDENT ID:\n");
-
-                String studentId = reader.readLine();
-
-                if (studentId.trim().equals("-1"))
-                    break updateStudent;
-
-                if (studentId.trim().equals(""))
-                    throw new InvalidStudentException("Student id is required!");
-
-                System.out.println("\nENTER STUDENT NEW FIRSTNAME:\n");
-
-                String firstName = reader.readLine();
-
-                if (firstName.trim().equals("-1"))
-                    break updateStudent;
-
-                if (firstName.trim().equals(""))
-                    throw new InvalidStudentException("Student firstname is required!");
-
-                System.out.println("\nENTER STUDENT NEW LASTNAME:\n");
-
-                String lastName = reader.readLine();
-
-                if (lastName.trim().equals("-1"))
-                    break updateStudent;
-
-                if (lastName.trim().equals(""))
-                    throw new InvalidStudentException("Student lastname is required!");
-
-                Student newStudent = new Student(Long.parseLong(studentId.trim()), 0, firstName.trim(), lastName.trim());
-
-                Student result_student = studentRepository.update(Long.parseLong(studentId.trim()), newStudent);
-
-                if (result_student == null)
-                    System.out.println("STUDENT UPDATED SUCCESSFULLY!");
-                else
-                    System.out.println("STUDENT UPDATED FAILED!");
-
-            } catch (IOException | InvalidStudentException ex) {
-                ex.printStackTrace();
-            }
-        }
+    public Student updateStudent(Long idForSearch, Student newStudentData) {
+        return studentRepository.update(idForSearch, newStudentData);
     }
 
     /**

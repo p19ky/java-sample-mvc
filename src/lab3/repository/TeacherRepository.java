@@ -1,7 +1,6 @@
 package lab3.repository;
 
 import lab3.model.Course;
-import lab3.model.Student;
 import lab3.model.Teacher;
 import lab3.utilities.DeleteSpecificFileLines;
 import lab3.utilities.ModelReader;
@@ -169,7 +168,7 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
     /**
      * PRINT TEACHERS TO CONSOLE.
      */
-    public void printTeachers() {
+    public static void printTeachers() {
         for (Teacher teacher : teachers) {
             StringBuilder str = new StringBuilder();
             str.append(teacher.toString());

@@ -4,15 +4,23 @@ import lab3.controller.CourseController;
 import lab3.controller.RegistrationSystem;
 import lab3.controller.StudentController;
 import lab3.controller.TeacherController;
+import lab3.exceptions.InvalidCourseException;
+import lab3.exceptions.InvalidStudentException;
+import lab3.exceptions.InvalidTeacherException;
 import lab3.model.Course;
 import lab3.model.Student;
+import lab3.model.Teacher;
 import lab3.repository.CourseRepository;
 import lab3.repository.StudentRepository;
+import lab3.repository.TeacherRepository;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
+
+import static lab3.controller.StudentController.isNumeric;
 
 public class Console {
     StudentController studentController = new StudentController();
@@ -342,31 +350,204 @@ public class Console {
                          * find one student
                          */
                         if (studentMenuInput.trim().equals("1")) {
-                            studentController.findOneStudent();
+
+                            findOneStudent: {
+                                try {
+                                    System.out.println("\nYOU CAN GO BACK BY ENTERING -1\n\n");
+
+                                    System.out.println("ENTER ID TO SEARCH FOR:\n");
+
+                                    // Reading data using readLine
+                                    String inputFind = reader.readLine();
+
+                                    if (inputFind.trim().equals("-1"))
+                                        break findOneStudent;
+
+                                    if (!isNumeric(inputFind.trim()))
+                                        throw new InvalidStudentException("Invalid Student id. Id must be numeric!");
+
+                                    if (inputFind.trim().length() < 1)
+                                        throw new InvalidStudentException("Student id is required!");
+
+                                    Student stud = studentController.findOneStudent(Long.parseLong(inputFind.trim()));
+
+                                    if (stud != null)
+                                        StudentRepository.printStudent(stud);
+                                    else
+                                        System.out.println("STUDENT DOES NOT EXIST");
+
+                                } catch (IOException | InvalidStudentException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
                         }
                         /**
                          * find all students
                          */
                         else if (studentMenuInput.trim().equals("2")) {
-                            studentController.findAllStudents();
+                            var students = studentController.findAllStudents();
+
+                            if (!students.isEmpty()) {
+                                StudentRepository.printStudents();
+                            } else {
+                                System.out.println("NO STUDENTS AVAILABLE!");
+                            }
                         }
                         /**
                          * save a new student to database
                          */
                         else if (studentMenuInput.trim().equals("3")) {
-                            studentController.saveStudent();
+
+                            saveStudent : {
+                                try {
+                                    System.out.println("\nENTER NEW STUDENT DETAILS:\n\n");
+
+                                    System.out.println("YOU CAN EXIT ANYTIME BY ENTERING -1\n");
+
+                                    System.out.println("\nFIRST NAME:\n");
+                                    String firstNameInput = reader.readLine();
+
+                                    if (firstNameInput.trim().equals("-1"))
+                                        break saveStudent;
+
+                                    if (firstNameInput.trim().equals(""))
+                                        throw new InvalidStudentException("Firstname is required!");
+
+                                    System.out.println("\nLAST NAME:\n\n");
+                                    String lastNameInput = reader.readLine();
+
+                                    if (lastNameInput.trim().equals("-1"))
+                                        break saveStudent;
+
+                                    if (lastNameInput.trim().equals(""))
+                                        throw new InvalidStudentException("Lastname is required!");
+
+                                    System.out.println("\nSTUDENT ID:\n\n");
+                                    String studentId = reader.readLine();
+
+                                    if (studentId.trim().equals("-1"))
+                                        break saveStudent;
+
+                                    if (studentId.trim().equals(""))
+                                        throw new InvalidStudentException("Student id is required!");
+
+                                    if (!isNumeric(studentId.trim()))
+                                        throw new InvalidStudentException("Student id should only contain numbers!");
+
+                                    Student stud = new Student(Long.parseLong(studentId.trim()), 0, firstNameInput.trim(), lastNameInput.trim());
+
+                                    Student student = studentController.saveStudent(stud);
+
+                                    if (student != null)
+                                        System.out.println("STUDENT ALREADY EXISTS!");
+                                    else
+                                        System.out.println("STUDENT SUCCESSFULLY SAVED!");
+
+                                } catch (IOException | InvalidStudentException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
                         }
                         /**
                          * delete an existing student
                          */
                         else if (studentMenuInput.trim().equals("4")) {
-                            studentController.deleteStudent();
+
+                            deleteStudent: {
+
+                                try {
+                                    System.out.println("\nSTUDENTS AVAILABLE:\n\n");
+                                    for (Student student : StudentRepository.getStudents()) {
+                                        StudentRepository.printStudent(student);
+                                    }
+
+                                    System.out.println("\n\nYOU CAN EXIT AT ANYTIME BY ENTERING -1\n\n");
+
+                                    System.out.println("\nENTER STUDENT ID:\n");
+
+                                    String studentId = reader.readLine();
+
+                                    if (studentId.trim().equals("-1"))
+                                        break deleteStudent;
+
+                                    if (studentId.trim().equals(""))
+                                        throw new InvalidStudentException("Student id is required!");
+
+                                    if (!isNumeric(studentId.trim()))
+                                        throw new InvalidStudentException("Student id is must be numeric!");
+
+                                    Student result_student = studentController.deleteStudent(Long.parseLong(studentId.trim()));
+
+                                    if (result_student == null)
+                                        System.out.println("STUDENT GIVEN DOES NOT EXIST!");
+                                    else
+                                        System.out.println("STUDENT DELETED SUCCESSFULLY!");
+
+                                } catch (IOException | InvalidStudentException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
                         }
                         /**
                          * update an existing student
                          */
                         else if (studentMenuInput.trim().equals("5")) {
-                            studentController.updateStudent();
+
+                            updateStudent: {
+                                try {
+                                    System.out.println("\nSTUDENTS AVAILABLE:\n\n");
+                                    for (Student student : StudentRepository.getStudents()) {
+                                        StudentRepository.printStudent(student);
+                                    }
+
+                                    System.out.println("\n\nYOU CAN EXIT AT ANYTIME BY ENTERING -1\n\n");
+
+                                    System.out.println("\nENTER STUDENT ID:\n");
+
+                                    String studentId = reader.readLine();
+
+                                    if (studentId.trim().equals("-1"))
+                                        break updateStudent;
+
+                                    if (studentId.trim().equals(""))
+                                        throw new InvalidStudentException("Student id is required!");
+
+                                    if (!isNumeric(studentId.trim()))
+                                        throw new InvalidStudentException("Student id should be numeric!");
+
+                                    System.out.println("\nENTER STUDENT NEW FIRSTNAME:\n");
+
+                                    String firstName = reader.readLine();
+
+                                    if (firstName.trim().equals("-1"))
+                                        break updateStudent;
+
+                                    if (firstName.trim().equals(""))
+                                        throw new InvalidStudentException("Student firstname is required!");
+
+                                    System.out.println("\nENTER STUDENT NEW LASTNAME:\n");
+
+                                    String lastName = reader.readLine();
+
+                                    if (lastName.trim().equals("-1"))
+                                        break updateStudent;
+
+                                    if (lastName.trim().equals(""))
+                                        throw new InvalidStudentException("Student lastname is required!");
+
+                                    Student newStudent = new Student(Long.parseLong(studentId.trim()), 0, firstName.trim(), lastName.trim());
+
+                                    Student result_student = studentController.updateStudent(Long.parseLong(studentId.trim()), newStudent);
+
+                                    if (result_student == null)
+                                        System.out.println("STUDENT UPDATED SUCCESSFULLY!");
+                                    else
+                                        System.out.println("STUDENT UPDATED FAILED!");
+
+                                } catch (IOException | InvalidStudentException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
                         }
 
                         printStudentMenu();
@@ -386,31 +567,199 @@ public class Console {
                          * find one teacher
                          */
                         if (teacherMenuInput.trim().equals("1")) {
-                            teacherController.findOneTeacher();
+
+                            findOneTeacher: {
+                                try {
+                                    System.out.println("\nYOU CAN GO BACK BY ENTERING -1\n\n");
+
+                                    System.out.println("ENTER ID TO SEARCH FOR:\n");
+
+                                    // Reading data using readLine
+                                    String inputId = reader.readLine();
+
+                                    if (inputId.trim().equals("-1"))
+                                        break findOneTeacher;
+
+                                    if (!isNumeric(inputId.trim()))
+                                        throw new InvalidTeacherException("Invalid Teacher id. Id must be numeric!");
+
+                                    if (inputId.trim().length() < 1)
+                                        throw new InvalidTeacherException("Teacher id is required!");
+
+                                    Teacher teacher = teacherController.findOneTeacher(Long.parseLong(inputId.trim()));
+
+                                    if (teacher != null)
+                                        TeacherRepository.printTeacher(teacher);
+                                    else
+                                        System.out.println("TEACHER DOES NOT EXIST!");
+
+                                } catch (IOException | InvalidTeacherException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
                         }
                         /**
                          * find all teachers
                          */
                         else if (teacherMenuInput.trim().equals("2")) {
-                            teacherController.findAllTeachers();
+                            var allTeachers = teacherController.findAllTeachers();
+
+                            if (!allTeachers.isEmpty())
+                                TeacherRepository.printTeachers();
+                            else
+                                System.out.println("NO TEACHERS AVAILABLE!");
                         }
                         /**
                          * save a new teacher to database
                          */
                         else if (teacherMenuInput.trim().equals("3")) {
-                            teacherController.saveTeacher();
+
+                            saveTeacher: {
+                                try {
+                                    System.out.println("\nENTER NEW TEACHER DETAILS:\n\n");
+
+                                    System.out.println("YOU CAN EXIT ANYTIME BY ENTERING -1\n");
+
+                                    System.out.println("\nID:\n");
+                                    String id = reader.readLine();
+
+                                    if (id.trim().equals("-1"))
+                                        break saveTeacher;
+
+                                    if (id.trim().equals(""))
+                                        throw new InvalidTeacherException("Id is required!");
+
+                                    if (!isNumeric(id.trim()))
+                                        throw new InvalidTeacherException("Teacher id should only contain numbers!");
+
+                                    System.out.println("\nFIRST NAME:\n\n");
+                                    String firstName = reader.readLine();
+
+                                    if (firstName.trim().equals("-1"))
+                                        break saveTeacher;
+
+                                    if (firstName.trim().equals(""))
+                                        throw new InvalidTeacherException("Firstname is required!");
+
+                                    System.out.println("\nLAST NAME:\n\n");
+                                    String lastName = reader.readLine();
+
+                                    if (lastName.trim().equals("-1"))
+                                        break saveTeacher;
+
+                                    if (lastName.trim().equals(""))
+                                        throw new InvalidTeacherException("Lastname is required!");
+
+                                    Teacher teacher = teacherController.saveTeacher(new Teacher(Long.parseLong(id.trim()), firstName.trim(), lastName.trim()));
+
+                                    if (teacher != null)
+                                        System.out.println("TEACHER ALREADY EXISTS!");
+                                    else
+                                        System.out.println("TEACHER SUCCESSFULLY SAVED!");
+
+                                } catch (IOException | InvalidTeacherException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
                         }
                         /**
                          * delete an existing teacher
                          */
                         else if (teacherMenuInput.trim().equals("4")) {
-                            teacherController.deleteTeacher();
+                            deleteTeacher: {
+                                try {
+                                    System.out.println("\nTEACHERS AVAILABLE:\n\n");
+                                    for (Teacher teacher : TeacherRepository.getTeachers()) {
+                                        TeacherRepository.printTeacher(teacher);
+                                    }
+
+                                    System.out.println("\n\nYOU CAN EXIT AT ANYTIME BY ENTERING -1\n\n");
+
+                                    System.out.println("\nENTER TEACHER ID:\n");
+
+                                    String inputId = reader.readLine();
+
+                                    if (inputId.trim().equals("-1"))
+                                        break deleteTeacher;
+
+                                    if (inputId.trim().equals(""))
+                                        throw new InvalidTeacherException("Teacher id is required!");
+
+                                    if (!isNumeric(inputId.trim()))
+                                        throw new InvalidTeacherException("Teacher id should only contain numbers!");
+
+                                    Teacher result_teacher = teacherController.deleteTeacher(Long.parseLong(inputId.trim()));
+
+                                    if (result_teacher == null)
+                                        System.out.println("TEACHER GIVEN DOES NOT EXIST!");
+                                    else
+                                        System.out.println("TEACHER DELETED SUCCESSFULLY!");
+
+                                } catch (IOException | InvalidTeacherException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
                         }
                         /**
                          * update an existing teacher
                          */
                         else if (teacherMenuInput.trim().equals("5")) {
-                            teacherController.updateTeacher();
+
+                            updateTeacher: {
+                                try {
+                                    System.out.println("\nTEACHERS AVAILABLE:\n\n");
+                                    for (Teacher teacher : TeacherRepository.getTeachers()) {
+                                        TeacherRepository.printTeacher(teacher);
+                                    }
+
+                                    System.out.println("\n\nYOU CAN EXIT AT ANYTIME BY ENTERING -1\n\n");
+
+                                    System.out.println("\nENTER TEACHER ID:\n");
+
+                                    String teacherId = reader.readLine();
+
+                                    if (teacherId.trim().equals("-1"))
+                                        break updateTeacher;
+
+                                    if (teacherId.trim().equals(""))
+                                        throw new InvalidTeacherException("Teacher id is required!");
+
+                                    if (!isNumeric(teacherId.trim()))
+                                        throw new InvalidTeacherException("Teacher id should only contain numbers!");
+
+                                    System.out.println("\nENTER TEACHER NEW FIRSTNAME:\n");
+
+                                    String firstName = reader.readLine();
+
+                                    if (firstName.trim().equals("-1"))
+                                        break updateTeacher;
+
+                                    if (firstName.trim().equals(""))
+                                        throw new InvalidTeacherException("Teacher firstname is required!");
+
+                                    System.out.println("\nENTER TEACHER NEW LASTNAME:\n");
+
+                                    String lastName = reader.readLine();
+
+                                    if (lastName.trim().equals("-1"))
+                                        break updateTeacher;
+
+                                    if (lastName.trim().equals(""))
+                                        throw new InvalidTeacherException("Teacher lastname is required!");
+
+                                    Teacher newTeacher = new Teacher(Long.parseLong(teacherId.trim()), firstName.trim(), lastName.trim());
+
+                                    Teacher result_teacher = teacherController.updateTeacher(Long.parseLong(teacherId.trim()), newTeacher);
+
+                                    if (result_teacher == null)
+                                        System.out.println("TEACHER UPDATED SUCCESSFULLY!");
+                                    else
+                                        System.out.println("TEACHER UPDATED FAILED!");
+
+                                } catch (IOException | InvalidTeacherException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
                         }
 
                         printTeacherMenu();
@@ -430,31 +779,283 @@ public class Console {
                          * find one course
                          */
                         if (courseMenuInput.trim().equals("1")) {
-//                            studentController.findOneStudent();
+                            findOneCourse: {
+                                try {
+                                    System.out.println("\nYOU CAN GO BACK BY ENTERING -1\n\n");
+
+                                    System.out.println("ENTER ID TO SEARCH FOR:\n");
+
+                                    // Reading data using readLine
+                                    String inputId = reader.readLine();
+
+                                    if (inputId.trim().equals("-1"))
+                                        break findOneCourse;
+
+                                    if (!isNumeric(inputId.trim()))
+                                        throw new InvalidCourseException("Invalid Course id. Id must be numeric!");
+
+                                    if (inputId.trim().length() < 1)
+                                        throw new InvalidCourseException("Course id is required!");
+
+                                    Course course = courseController.findOneCourse(Long.parseLong(inputId.trim()));
+
+                                    if (course != null)
+                                        System.out.println(course);
+                                    else
+                                        System.out.println("COURSE DOES NOT EXIST!");
+
+                                } catch (IOException | InvalidCourseException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
                         }
                         /**
                          * find all courses
                          */
                         else if (courseMenuInput.trim().equals("2")) {
-//                            studentController.findAllStudents();
+                            var myCourses = courseController.findAllCourses();
+
+                            if (!myCourses.isEmpty())
+                                CourseRepository.printCourses();
+                            else
+                                System.out.println("NO COURSES AVAILABLE!");
                         }
                         /**
                          * save a new course to database
                          */
                         else if (courseMenuInput.trim().equals("3")) {
-//                            studentController.saveStudent();
+                            saveCourse: {
+                                try {
+                                    System.out.println("\nENTER NEW COURSE DETAILS:\n\n");
+
+                                    System.out.println("YOU CAN EXIT ANYTIME BY ENTERING -1\n");
+
+                                    System.out.println("\nID:\n");
+                                    String id = reader.readLine();
+
+                                    if (id.trim().equals("-1"))
+                                        break saveCourse;
+
+                                    if (id.trim().equals(""))
+                                        throw new InvalidCourseException("Id is required!");
+
+                                    if (!isNumeric(id.trim()))
+                                        throw new InvalidCourseException("Course id should only contain numbers!");
+
+                                    System.out.println("\nNAME:\n\n");
+                                    String name = reader.readLine();
+
+                                    if (name.trim().equals("-1"))
+                                        break saveCourse;
+
+                                    if (name.trim().equals(""))
+                                        throw new InvalidCourseException("Name is required!");
+
+                                    System.out.println("\nALL TEACHERS:\n\n");
+
+                                    TeacherRepository.printTeachers();
+
+                                    System.out.println("\n\nTEACHER ID:\n\n");
+                                    String teacherId = reader.readLine();
+
+                                    if (teacherId.trim().equals("-1"))
+                                        break saveCourse;
+
+                                    if (teacherId.trim().equals(""))
+                                        throw new InvalidTeacherException("Teacher id is required!");
+
+                                    if (!isNumeric(teacherId.trim()))
+                                        throw new InvalidTeacherException("Teacher ids are numeric!");
+
+
+                                    Teacher teacher = null;
+                                    for (Teacher t : TeacherRepository.getTeachers())
+                                        if (t.getTeacherId().equals(Long.parseLong(teacherId.trim())))
+                                            teacher = t;
+
+                                    if (teacher == null)
+                                        throw new InvalidTeacherException("Teacher does not exist!");
+
+                                    System.out.println("\n\nMAX ENROLLMENT:\n\n");
+                                    String maxEnrollment = reader.readLine();
+
+                                    if (maxEnrollment.trim().equals("-1"))
+                                        break saveCourse;
+
+                                    if (maxEnrollment.trim().equals(""))
+                                        throw new InvalidCourseException("Max Enrollment number is required!");
+
+                                    if (!isNumeric(maxEnrollment.trim()))
+                                        throw new InvalidCourseException("Max Enrollment number should only contain numbers!");
+
+                                    if (Integer.parseInt(maxEnrollment.trim()) <= 0)
+                                        throw new InvalidCourseException("Max Enrollment should not be negative!");
+
+                                    System.out.println("\n\nCREDITS:\n\n");
+                                    String credits = reader.readLine();
+
+                                    if (credits.trim().equals("-1"))
+                                        break saveCourse;
+
+                                    if (credits.trim().equals(""))
+                                        throw new InvalidCourseException("Credits is required!");
+
+                                    if (!isNumeric(credits.trim()))
+                                        throw new InvalidCourseException("Credits should only contain numbers!");
+
+                                    if (Integer.parseInt(credits.trim()) <= 0)
+                                        throw new InvalidCourseException("Credits should not be negative!");
+
+                                    Course course = courseController.saveCourse(new Course(name.trim(), Long.parseLong(id.trim()), teacher, Integer.parseInt(maxEnrollment.trim()), new ArrayList<>(), Integer.parseInt(credits.trim())));
+
+                                    if (course != null)
+                                        System.out.println("COURSE ALREADY EXISTS!");
+                                    else
+                                        System.out.println("COURSE SUCCESSFULLY SAVED!");
+
+                                } catch (IOException | InvalidCourseException | InvalidTeacherException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
                         }
                         /**
                          * delete an existing course
                          */
                         else if (courseMenuInput.trim().equals("4")) {
-//                            studentController.deleteStudent();
+                            deleteCourse: {
+                                try {
+                                    System.out.println("\nCOURSES AVAILABLE:\n\n");
+                                    for (Course course : CourseRepository.getCourses()) {
+                                        System.out.println(course);
+                                    }
+
+                                    System.out.println("\n\nYOU CAN EXIT AT ANYTIME BY ENTERING -1\n\n");
+
+                                    System.out.println("\nENTER COURSE ID:\n");
+
+                                    String inputId = reader.readLine();
+
+                                    if (inputId.trim().equals("-1"))
+                                        break deleteCourse;
+
+                                    if (inputId.trim().equals(""))
+                                        throw new InvalidCourseException("Course id is required!");
+
+                                    if (!isNumeric(inputId.trim()))
+                                        throw new InvalidCourseException("Course id should only contain numbers!");
+
+                                    Course result_course = courseController.deleteCourse(Long.parseLong(inputId.trim()));
+
+                                    if (result_course == null)
+                                        System.out.println("COURSE GIVEN DOES NOT EXIST!");
+                                    else
+                                        System.out.println("COURSE DELETED SUCCESSFULLY!");
+
+                                } catch (IOException | InvalidCourseException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
                         }
                         /**
                          * update an existing course
                          */
                         else if (courseMenuInput.trim().equals("5")) {
-//                            studentController.updateStudent();
+                            updateCourse: {
+                                try {
+                                    System.out.println("\nCOURSES AVAILABLE:\n\n");
+                                    for (Course course : CourseRepository.getCourses()) {
+                                        System.out.println(course);
+                                    }
+
+                                    System.out.println("\n\nYOU CAN EXIT AT ANYTIME BY ENTERING -1\n\n");
+
+                                    System.out.println("\nENTER COURSE ID:\n");
+
+                                    String inputId = reader.readLine();
+
+                                    if (inputId.trim().equals("-1"))
+                                        break updateCourse;
+
+                                    if (inputId.trim().equals(""))
+                                        throw new InvalidCourseException("Course id is required!");
+
+                                    if (!isNumeric(inputId.trim()))
+                                        throw new InvalidCourseException("Course id should only contain numbers!");
+
+                                    System.out.println("\nENTER COURSE NAME:\n");
+
+                                    String name = reader.readLine();
+
+                                    if (name.trim().equals("-1"))
+                                        break updateCourse;
+
+                                    if (inputId.trim().equals(""))
+                                        throw new InvalidCourseException("Course name is required!");
+
+                                    System.out.println("\n\nTEACHER ID:\n\n");
+                                    String teacherId = reader.readLine();
+
+                                    if (teacherId.trim().equals("-1"))
+                                        break updateCourse;
+
+                                    if (teacherId.trim().equals(""))
+                                        throw new InvalidTeacherException("Teacher id is required!");
+
+                                    if (!isNumeric(teacherId.trim()))
+                                        throw new InvalidTeacherException("Teacher ids are numeric!");
+
+                                    Teacher teacher = null;
+                                    for (Teacher t : TeacherRepository.getTeachers())
+                                        if (t.getTeacherId().equals(Long.parseLong(teacherId.trim())))
+                                            teacher = t;
+
+                                    if (teacher == null)
+                                        throw new InvalidTeacherException("Teacher does not exist!");
+
+                                    System.out.println("\n\nMAX ENROLLMENT:\n\n");
+                                    String maxEnrollment = reader.readLine();
+
+                                    if (maxEnrollment.trim().equals("-1"))
+                                        break updateCourse;
+
+                                    if (maxEnrollment.trim().equals(""))
+                                        throw new InvalidCourseException("Max Enrollment number is required!");
+
+                                    if (!isNumeric(maxEnrollment.trim()))
+                                        throw new InvalidCourseException("Max Enrollment number should only contain numbers!");
+
+                                    if (Integer.parseInt(maxEnrollment.trim()) <= 0)
+                                        throw new InvalidCourseException("Max Enrollment should not be negative!");
+
+                                    System.out.println("\n\nCREDITS:\n\n");
+                                    String credits = reader.readLine();
+
+                                    if (credits.trim().equals("-1"))
+                                        break updateCourse;
+
+                                    if (credits.trim().equals(""))
+                                        throw new InvalidCourseException("Credits is required!");
+
+                                    if (!isNumeric(credits.trim()))
+                                        throw new InvalidCourseException("Credits should only contain numbers!");
+
+                                    if (Integer.parseInt(credits.trim()) <= 0)
+                                        throw new InvalidCourseException("Credits should not be negative!");
+
+                                    Course course =
+                                            new Course(name.trim(), Long.parseLong(inputId.trim()), teacher, Integer.parseInt(maxEnrollment.trim()), new ArrayList<>(), Integer.parseInt(credits.trim()));
+
+                                    Course result = courseController.updateCourse(Long.parseLong(inputId.trim()), course);
+
+                                    if (result == null)
+                                        System.out.println("UPDATE SUCCESSFUL!");
+                                    else
+                                        System.out.println("UPDATED FAILED!");
+
+                                } catch (IOException | InvalidCourseException | InvalidTeacherException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
                         }
 
                         printCourseMenu();
