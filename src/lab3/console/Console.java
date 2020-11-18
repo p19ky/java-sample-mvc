@@ -190,8 +190,8 @@ public class Console {
             while (!input.equals("0")) {
                 // Printing the read line
 
-                /**
-                 * register Student for Course.
+                /*
+                  register Student for Course.
                  */
                 if (input.trim().equals("1")) {
 
@@ -264,15 +264,21 @@ public class Console {
                         registrationSystem.register(courseForCall, studentForCall);
                     }
 
-                    /**
-                     * Print Courses with free places.
+                    /*
+                      Print Courses with free places.
                      */
                 } else if (input.trim().equals("2")) {
 
                     List<Course> courses = registrationSystem.retrieveCoursesWithFreePlaces();
 
-                    /**
-                     * Get Students enrolled in a given course.
+                    if (!courses.isEmpty())
+                        for (Course course : courses)
+                            System.out.println(course);
+                    else
+                        System.out.println("NO COURSES WITH FREE PLACES!");
+
+                    /*
+                      Get Students enrolled in a given course.
                      */
                 } else if (input.trim().equals("3")) {
 
@@ -319,26 +325,26 @@ public class Console {
                             StudentRepository.printStudent(stud);
                     }
                 }
-                /**
-                 * Print all courses.
+                /*
+                  Print all courses.
                  */
                 else if (input.trim().equals("4")) {
                     this.courseController.print();
                 }
-                /**
-                 * Print all students.
+                /*
+                  Print all students.
                  */
                 else if (input.trim().equals("5")) {
                     this.studentController.print();
                 }
-                /**
-                 * Print all teachers.
+                /*
+                  Print all teachers.
                  */
                 else if (input.trim().equals("6")) {
                     this.teacherController.print();
                 }
-                /**
-                 * Print Student Menu
+                /*
+                  Print Student Menu
                  */
                 else if (input.trim().equals("7")) {
                     printStudentMenu();
@@ -346,8 +352,8 @@ public class Console {
                     String studentMenuInput = reader.readLine();
 
                     while (!studentMenuInput.equals("0")) {
-                        /**
-                         * find one student
+                        /*
+                          find one student
                          */
                         if (studentMenuInput.trim().equals("1")) {
 
@@ -381,8 +387,8 @@ public class Console {
                                 }
                             }
                         }
-                        /**
-                         * find all students
+                        /*
+                          find all students
                          */
                         else if (studentMenuInput.trim().equals("2")) {
                             var students = studentController.findAllStudents();
@@ -393,8 +399,8 @@ public class Console {
                                 System.out.println("NO STUDENTS AVAILABLE!");
                             }
                         }
-                        /**
-                         * save a new student to database
+                        /*
+                          save a new student to database
                          */
                         else if (studentMenuInput.trim().equals("3")) {
 
@@ -448,8 +454,8 @@ public class Console {
                                 }
                             }
                         }
-                        /**
-                         * delete an existing student
+                        /*
+                          delete an existing student
                          */
                         else if (studentMenuInput.trim().equals("4")) {
 
@@ -488,8 +494,8 @@ public class Console {
                                 }
                             }
                         }
-                        /**
-                         * update an existing student
+                        /*
+                          update an existing student
                          */
                         else if (studentMenuInput.trim().equals("5")) {
 
@@ -554,8 +560,8 @@ public class Console {
                         studentMenuInput = reader.readLine();
                     }
                 }
-                /**
-                 * Print Teacher Menu
+                /*
+                  Print Teacher Menu
                  */
                 else if (input.trim().equals("8")) {
                     printTeacherMenu();
@@ -563,8 +569,8 @@ public class Console {
                     String teacherMenuInput = reader.readLine();
 
                     while (!teacherMenuInput.equals("0")) {
-                        /**
-                         * find one teacher
+                        /*
+                          find one teacher
                          */
                         if (teacherMenuInput.trim().equals("1")) {
 
@@ -598,8 +604,8 @@ public class Console {
                                 }
                             }
                         }
-                        /**
-                         * find all teachers
+                        /*
+                          find all teachers
                          */
                         else if (teacherMenuInput.trim().equals("2")) {
                             var allTeachers = teacherController.findAllTeachers();
@@ -609,8 +615,8 @@ public class Console {
                             else
                                 System.out.println("NO TEACHERS AVAILABLE!");
                         }
-                        /**
-                         * save a new teacher to database
+                        /*
+                          save a new teacher to database
                          */
                         else if (teacherMenuInput.trim().equals("3")) {
 
@@ -662,8 +668,8 @@ public class Console {
                                 }
                             }
                         }
-                        /**
-                         * delete an existing teacher
+                        /*
+                          delete an existing teacher
                          */
                         else if (teacherMenuInput.trim().equals("4")) {
                             deleteTeacher: {
@@ -700,8 +706,8 @@ public class Console {
                                 }
                             }
                         }
-                        /**
-                         * update an existing teacher
+                        /*
+                          update an existing teacher
                          */
                         else if (teacherMenuInput.trim().equals("5")) {
 
@@ -766,8 +772,8 @@ public class Console {
                         teacherMenuInput = reader.readLine();
                     }
                 }
-                /**
-                 * Print Course Menu
+                /*
+                  Print Course Menu
                  */
                 else if (input.trim().equals("9")) {
                     printCourseMenu();
@@ -775,8 +781,8 @@ public class Console {
                     String courseMenuInput = reader.readLine();
 
                     while (!courseMenuInput.equals("0")) {
-                        /**
-                         * find one course
+                        /*
+                          find one course
                          */
                         if (courseMenuInput.trim().equals("1")) {
                             findOneCourse: {
@@ -809,8 +815,8 @@ public class Console {
                                 }
                             }
                         }
-                        /**
-                         * find all courses
+                        /*
+                          find all courses
                          */
                         else if (courseMenuInput.trim().equals("2")) {
                             var myCourses = courseController.findAllCourses();
@@ -820,8 +826,8 @@ public class Console {
                             else
                                 System.out.println("NO COURSES AVAILABLE!");
                         }
-                        /**
-                         * save a new course to database
+                        /*
+                          save a new course to database
                          */
                         else if (courseMenuInput.trim().equals("3")) {
                             saveCourse: {
@@ -918,8 +924,8 @@ public class Console {
                                 }
                             }
                         }
-                        /**
-                         * delete an existing course
+                        /*
+                          delete an existing course
                          */
                         else if (courseMenuInput.trim().equals("4")) {
                             deleteCourse: {
@@ -956,8 +962,8 @@ public class Console {
                                 }
                             }
                         }
-                        /**
-                         * update an existing course
+                        /*
+                          update an existing course
                          */
                         else if (courseMenuInput.trim().equals("5")) {
                             updateCourse: {
@@ -1062,8 +1068,8 @@ public class Console {
                         courseMenuInput = reader.readLine();
                     }
                 }
-                /**
-                 * sort students on given criteria
+                /*
+                  sort students on given criteria
                  */
                 else if (input.trim().equals("10")) {
                     printStudentSortMenu();
@@ -1088,8 +1094,8 @@ public class Console {
                         studentSortMenuInput = reader.readLine();
                     }
                 }
-                /**
-                 * sort teachers on given criteria
+                /*
+                  sort teachers on given criteria
                  */
                 else if (input.trim().equals("11")) {
                     printTeacherSortMenu();
@@ -1112,8 +1118,8 @@ public class Console {
                         teacherSortMenuInput = reader.readLine();
                     }
                 }
-                /**
-                 * sort courses on given criteria
+                /*
+                  sort courses on given criteria
                  */
                 else if (input.trim().equals("12")) {
                     printCourseSortMenu();
@@ -1138,8 +1144,8 @@ public class Console {
                         courseSortMenuInput = reader.readLine();
                     }
                 }
-                /**
-                 * filter students on total credits
+                /*
+                  filter students on total credits
                  */
                 else if (input.trim().equals("13")) {
                     printStudentFilterMenu();
@@ -1198,7 +1204,7 @@ public class Console {
                     }
                 }
 
-                /** REPRINT CONSOLE IF 0 WAS NOT THE INPUT */
+                /* REPRINT CONSOLE IF 0 WAS NOT THE INPUT */
                 printConsole();
                 input = reader.readLine();
             }

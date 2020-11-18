@@ -152,7 +152,6 @@ public class RegistrationSystem {
         System.out.println("THERE IS NO SUCH COURSE!");
         return new ArrayList<Student>(){};
 
-
     }
 
     /**
