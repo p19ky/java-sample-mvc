@@ -13,10 +13,21 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class StudentController {
-    private final StudentRepository studentRepository = new StudentRepository("students.txt");
+    private final StudentRepository studentRepository;
 
-    public StudentController() {}
+    public StudentController() {
+        studentRepository = new StudentRepository("students.txt");
+    }
 
+    public StudentController(String fileName) {
+        studentRepository = new StudentRepository(fileName);
+    }
+
+    /**
+     * utility function for checking if given string is numeric
+     * @param str given string
+     * @return true if string is numeric else false
+     */
     public static boolean isNumeric(String str) {
         return str != null && str.matches("[-+]?\\d*\\.?\\d+");
     }
@@ -121,7 +132,7 @@ public class StudentController {
      * @param totalCredits total credits to filter after.
      * return filtered list of students based on total credits.
      */
-    public void filterStudentsOnTotalCredits(int totalCredits, String TypeOfFilter) {
+    public List<Student> filterStudentsOnTotalCredits(int totalCredits, String TypeOfFilter) {
         var students = StudentRepository.getStudents();
 
         Predicate<Student> byTotalCredits = null;
@@ -138,5 +149,7 @@ public class StudentController {
 
         for (Student student : result)
             StudentRepository.printStudent(student);
+
+        return result;
     }
 }

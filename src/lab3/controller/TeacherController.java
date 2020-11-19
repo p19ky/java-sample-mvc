@@ -7,9 +7,15 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TeacherController {
-    private final TeacherRepository teacherRepository  = new TeacherRepository("teachers.txt");
+    private final TeacherRepository teacherRepository;
 
-    public TeacherController() {}
+    public TeacherController() {
+        teacherRepository = new TeacherRepository("teachers.txt");
+    }
+
+    public TeacherController(String fileName) {
+        teacherRepository = new TeacherRepository(fileName);
+    }
 
     public void print() {
         TeacherRepository.printTeachers();
@@ -50,7 +56,7 @@ public class TeacherController {
 
 
     /**
-     * @param
+     * @param idForSearch must not be null, teacher must be valid
      * @return resulted teacher
      */
     public Teacher updateTeacher(Long idForSearch, Teacher teacher) {

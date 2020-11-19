@@ -1137,7 +1137,7 @@ public class Console {
                         } else if (courseSortMenuInput.trim().equals("4")) {
                             courseController.sortCoursesOnCredits();
                         } else if (courseSortMenuInput.trim().equals("5")) {
-                            courseController.sortTeachersOnNumberOfCourses();
+                            courseController.sortCoursesOnNumberOfStudentsEnrolled();
                         }
 
                         printCourseSortMenu();

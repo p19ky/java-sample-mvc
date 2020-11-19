@@ -19,12 +19,18 @@ import java.util.List;
 import static lab3.controller.StudentController.isNumeric;
 
 public class CourseController {
-    private final CourseRepository courseRepository = new CourseRepository("courses.txt");
+    private final CourseRepository courseRepository;
 
-    public CourseController() {}
+    public CourseController() {
+        courseRepository = new CourseRepository("courses.txt");
+    }
+
+    public CourseController(String fileName) {
+        courseRepository = new CourseRepository(fileName);
+    }
 
     public void print() {
-        this.courseRepository.printCourses();
+        CourseRepository.printCourses();
     }
 
     /**
@@ -108,7 +114,7 @@ public class CourseController {
     /**
      * sort courses on number of studentsEnrolled
      */
-    public void sortTeachersOnNumberOfCourses() {
+    public void sortCoursesOnNumberOfStudentsEnrolled() {
         CourseRepository.getCourses().sort(Comparator.comparingInt(c -> c.getStudentsEnrolled().size()));
         for (Course course : CourseRepository.getCourses()) {
             System.out.println(course.toString());
