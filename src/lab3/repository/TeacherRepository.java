@@ -15,7 +15,7 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
 
     public TeacherRepository(String fileNameNew) {
         fileName = fileNameNew;
-        teachers = new ArrayList<Teacher>();
+        teachers = new ArrayList<>();
         this.fillTeacherRepositoryWithTeachersFromFile();
     }
 
@@ -98,7 +98,7 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
                 return teacher;
 
 
-        List<Course> emptyCourseList = new ArrayList<Course>(){};
+        List<Course> emptyCourseList = new ArrayList<>(){};
         String newLine = teacher.customToString(emptyCourseList);
         ModelWriter mw = new ModelWriter();
         mw.writeToFile(fileName, newLine);
@@ -154,7 +154,7 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
                 t.setFirstName(teacher.getFirstName());
                 t.setLastName(teacher.getLastName());
 
-                List<Course> emptyCourseList = new ArrayList<Course>(){};
+                List<Course> emptyCourseList = new ArrayList<>(){};
                 System.out.println(CourseRepository.getCourses());
                 String newLine = t.customToString(emptyCourseList);
                 ModelWriter mw = new ModelWriter();
@@ -173,7 +173,7 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
             StringBuilder str = new StringBuilder();
             str.append(teacher.toString());
             str.append(" courses: [");
-            for (Course course : teacher.getCourses(new ArrayList<Course>(){})) {
+            for (Course course : teacher.getCourses(new ArrayList<>(){})) {
                 str.append(course.getName());
                 str.append(";");
             }
@@ -194,7 +194,7 @@ public class TeacherRepository implements ICrudRepository<Teacher>{
             StringBuilder str = new StringBuilder();
             str.append(teacher.toString());
             str.append(" courses: [");
-            for (Course course : teacher.getCourses(new ArrayList<Course>(){})) {
+            for (Course course : teacher.getCourses(new ArrayList<>(){})) {
                 str.append(course.getName());
                 str.append(";");
             }

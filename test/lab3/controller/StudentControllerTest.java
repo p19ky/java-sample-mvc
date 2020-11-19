@@ -7,7 +7,6 @@ import lab3.repository.StudentRepository;
 import lab3.repository.TeacherRepository;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class StudentControllerTest extends TestCase {
 

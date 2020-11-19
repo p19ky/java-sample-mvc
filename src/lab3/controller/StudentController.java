@@ -1,13 +1,9 @@
 package lab3.controller;
 
-import lab3.exceptions.InvalidStudentException;
 import lab3.model.Student;
 import lab3.repository.StudentRepository;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.InvalidClassException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;

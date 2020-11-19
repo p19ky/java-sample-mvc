@@ -8,8 +8,6 @@ import lab3.utilities.ModelWriter;
 import lab3.model.Course;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class CourseRepository implements ICrudRepository<Course> {

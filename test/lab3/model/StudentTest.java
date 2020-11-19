@@ -43,6 +43,6 @@ public class StudentTest extends TestCase {
 
     public void testGetEnrolledCourses() {
         CourseRepository courseRepository = new CourseRepository("courses.txt");
-        assertTrue(student.getEnrolledCourses(new ArrayList<Course>(){}).isEmpty());
+        assertTrue(student.getEnrolledCourses(new ArrayList<>()).isEmpty());
     }
 }

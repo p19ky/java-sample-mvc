@@ -14,7 +14,7 @@ public class CourseTest extends TestCase {
     public void setUp() throws Exception {
 
         teacher = new Teacher(25L,"Shawn","Mendes");
-        course=new Course("Java",7L,teacher,72,new ArrayList<Student>(){},6);
+        course=new Course("Java",7L,teacher,72,new ArrayList<>(),6);
     }
 
     public void tearDown() throws Exception {
@@ -81,7 +81,7 @@ public class CourseTest extends TestCase {
     public void testSetStudentsEnrolled() {
 
         Student student = new Student(25L,6,"Chester","Bennington");
-        List<Student> arrayStudent = new ArrayList<Student>(){};
+        List<Student> arrayStudent = new ArrayList<>();
         arrayStudent.add(student);
 
         course.setStudentsEnrolled(arrayStudent);

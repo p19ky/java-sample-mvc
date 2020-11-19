@@ -1,10 +1,8 @@
 package lab3.repository;
 
 import junit.framework.TestCase;
-import lab3.model.Course;
 import lab3.model.Teacher;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TeacherRepositoryTest extends TestCase {

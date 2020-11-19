@@ -90,7 +90,7 @@ public class StudentRepository implements ICrudRepository<Student>{
                 return student;
 
 
-        String newLine = student.customToString(new ArrayList<Course>(){});
+        String newLine = student.customToString(new ArrayList<>(){});
         ModelWriter mw = new ModelWriter();
         mw.writeToFile(fileName, newLine);
         students.add(student);
@@ -118,7 +118,7 @@ public class StudentRepository implements ICrudRepository<Student>{
         if (index != -1) {
             List<Student> newStudentArray;
             for (Course course : CourseRepository.getCourses()) {
-                newStudentArray = new ArrayList<Student>(){};
+                newStudentArray = new ArrayList<>(){};
                 for (Student student : course.getStudentsEnrolled()) {
                     if (!(student.getStudentId().equals(students.get(index).getStudentId())))
                         newStudentArray.add(student);
@@ -172,7 +172,7 @@ public class StudentRepository implements ICrudRepository<Student>{
                 stud.setFirstName(student.getFirstName());
                 stud.setLastName(student.getLastName());
 
-                String newLine = stud.customToString(new ArrayList<Course>(){});
+                String newLine = stud.customToString(new ArrayList<>(){});
                 ModelWriter mw = new ModelWriter();
                 mw.writeToFile(fileName, newLine);
 
@@ -191,7 +191,7 @@ public class StudentRepository implements ICrudRepository<Student>{
             StringBuilder str = new StringBuilder();
             str.append(student.toString());
             str.append(" enrolledCourses: [");
-            for (Course course : student.getEnrolledCourses(new ArrayList<Course>(){})) {
+            for (Course course : student.getEnrolledCourses(new ArrayList<>(){})) {
                 str.append(course.getName());
                 str.append(";");
             }
@@ -213,7 +213,7 @@ public class StudentRepository implements ICrudRepository<Student>{
             StringBuilder str = new StringBuilder();
             str.append(student.toString());
             str.append(" enrolledCourses: [");
-            for (Course course : student.getEnrolledCourses(new ArrayList<Course>(){})) {
+            for (Course course : student.getEnrolledCourses(new ArrayList<>(){})) {
                 str.append(course.getName());
                 str.append(";");
             }

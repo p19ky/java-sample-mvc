@@ -32,7 +32,7 @@ public class TeacherTest extends TestCase {
 
     public void testGetCourses() {
         CourseRepository courseRepository = new CourseRepository("courses.txt");
-        assertTrue(teacher.getCourses(new ArrayList<Course>(){}).isEmpty());
+        assertTrue(teacher.getCourses(new ArrayList<>()).isEmpty());
     }
     public void testGetFirstName() {
         assertEquals("Shawn", teacher.getFirstName());

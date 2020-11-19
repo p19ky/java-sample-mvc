@@ -12,10 +12,6 @@ import java.util.List;
 
 public class RegistrationSystem {
 
-    public void callRegister() {
-
-    }
-
     /**
      *
      * @param course whom the student should be enrolled to.
@@ -80,7 +76,6 @@ public class RegistrationSystem {
 
                     ModelWriter mw = new ModelWriter();
                     String newLine = c.customToString();
-//                    System.out.println(newLine);
                     mw.writeToFile(CourseRepository.fileName, newLine);
 
                     //student updates
@@ -90,7 +85,6 @@ public class RegistrationSystem {
 
                             df.deleteLines(StudentRepository.fileName, String.valueOf(student.getStudentId()));
                             newLine = student.customToString(new ArrayList<Course>(){});
-//                            System.out.println(newLine);
                             mw.writeToFile(StudentRepository.fileName, newLine);
                         }
                     }

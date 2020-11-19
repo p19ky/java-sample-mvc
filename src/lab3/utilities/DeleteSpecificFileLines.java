@@ -38,9 +38,7 @@ public class DeleteSpecificFileLines {
             if (!tempFile.renameTo(inputFile))
                 System.out.println("Could not rename file");
         }
-        catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        }catch (IOException ex) {
+        catch (IOException ex) {
             ex.printStackTrace();
         }
     }

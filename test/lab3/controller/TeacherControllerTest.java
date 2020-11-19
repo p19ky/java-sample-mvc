@@ -1,7 +1,6 @@
 package lab3.controller;
 
 import junit.framework.TestCase;
-import lab3.model.Teacher;
 import lab3.repository.CourseRepository;
 import lab3.repository.StudentRepository;
 import lab3.repository.TeacherRepository;

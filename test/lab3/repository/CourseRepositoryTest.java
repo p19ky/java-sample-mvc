@@ -2,7 +2,6 @@ package lab3.repository;
 
 import junit.framework.TestCase;
 import lab3.model.Course;
-import lab3.model.Student;
 import lab3.model.Teacher;
 
 import java.util.ArrayList;
@@ -51,7 +50,7 @@ public class CourseRepositoryTest extends TestCase {
     public void testSave() {
 
         Teacher teacher = new Teacher(2L,"Cristian","Sacarea");
-        Course course = new Course("WS",13L,teacher,20,new ArrayList<Student>(),4);
+        Course course = new Course("WS",13L,teacher,20,new ArrayList<>(),4);
         assertNull(courseRepository.save(course));
         assertNotNull(courseRepository.save(course));
 
@@ -78,7 +77,7 @@ public class CourseRepositoryTest extends TestCase {
                                 "Catalin",
                                 "Rusu"),
                         30,
-                        new ArrayList<Student>(),
+                        new ArrayList<>(),
                         3);
 
 
@@ -90,7 +89,7 @@ public class CourseRepositoryTest extends TestCase {
                 12L,
                 new Teacher(2L, "Cristian", "Sacarea"),
                 30,
-                new ArrayList<Student>(),
+                new ArrayList<>(),
                 6);
 
         Course resultCourse1 = courseRepository.update(12L, BackToOldCourse);
